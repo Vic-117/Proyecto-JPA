@@ -1,0 +1,2 @@
+Nombre | apellidoPaterno | apellidoMaterno | email |password | fechaNacimiento| idRol | Sexo | Telefono | Celular |Curp| calle |numeroInterior|numeroExterior|idColonia
+Jesus Angel | Romero | Jimenez | jesusAAAA@gmail.com | 123456L45a. |11/12/2002 | 1 | M | 5517731245 |5512789631 | PERV020521HMCRMCA2| Nuevo Laredo22|1|120|1

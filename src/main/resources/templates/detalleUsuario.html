@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<!--
+Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this template
+-->
+<html  xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <title>TODO supply a title</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
+
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    </head>
+    <body class="container">
+
+        <br>
+        <section class="container row col-12 mb-3" id="Seccion-Usuario" >
+            <div class="card col-2">
+
+                <img class="card-img-thumbnail" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTNT31I-b-Jdf8bjPM-mm-V1qCpb-oudRLvtw&s"/>
+
+                <div class="card-title" th:text="|${Usuario.nombre} ${Usuario.apellidoPaterno} ${Usuario.apellidoMaterno}|"/>
+
+
+            </div>
+            <div class="card col-10">
+                <div class="card-title" style="font-weight: 600; font-size: 1.5rem;">INFORMACION</div>
+                <div class="card-body">
+                    <p th:utext="|<b>Email:</b> ${Usuario.email}|"></p>
+                
+                    <p th:utext="|<b>Fecha Nacimiento:</b> ${Usuario.fechaNacimiento}|"></p>
+                    <p th:utext="|<b>Rol:</b> ${Usuario.rol.idRol}|"></p>
+                    <p th:utext="|<b>Sexo:</b> ${Usuario.sexo}|"></p>
+                    <p th:utext="|<b>Telefono:</b> ${Usuario.telefono}|"></p>
+                    <p th:utext="|<b>Celular:</b> ${Usuario.celular}|"></p>
+                    <p th:utext="|<b>Curp:</b> ${Usuario.curp}|"></p>
+
+                    <a href="url" class="btn btn-warning col-12" th:href="@{/Usuario/formularioEditable?idUsuario=}+${Usuario.idUsuario}">Editar</a>
+                </div>
+            </div>
+
+
+
+        </section>
+        <br>
+
+        <section class="container col-12 row" id="Seccion-Direccion">
+            <div class="card">
+                <div class="card-title" style="font-weight: bold; font-size: 2rem">DIRECCIONES</div>
+                <div class="card-body">
+                    <table class="table">
+                        <th class="col-10 table-primary">Direccion</th>
+                        <th class="col-12 table-info">Accion</th>
+
+                        <tr th:each="direccion:${Usuario.Direcciones}">
+                            <td  th:text="|${direccion.calle} ${direccion.numeroInterior} ${direccion.numeroExterior}|"></td>
+                            <td>
+                                <div class="btn-group">
+                                        <a class="btn btn-warning" th:href="@{/Usuario/formularioEditable?idUsuario=}+${Usuario.idUsuario}+'&idDireccion='+${direccion.idDireccion}">
+                                                    <!--@{/Usuario/formularioEditable?idUsuario=}+${Usuario.idUsuario}-->
+                                            <i class="bi bi-pencil-square"></i>
+                                        </a>
+                                        <a class="btn btn-danger">
+                                            <i class="bi bi-x-square"></i>
+                                        </a>
+                                </div>
+                            </td>
+                        </tr>
+                    </table>
+                    <a href="" class="col-12 btn btn-success" th:href="@{/Usuario/formularioEditable?idUsuario=}+ ${Usuario.idUsuario}+'&idDireccion=0'" >Agregar nueva dirección</a>
+                </div>
+            </div>
+
+        </section>
+        
+        
+            
+             <script th:if="${resultadoUpdate}" th:inline="javascript">
+            console.log("Entró");
+            if ([[${resultadoUpdate.Correct}]]){
+                Swal.fire({
+                position: "top-end",
+                        icon: "success",
+                        title: [[${resultadoUpdate.Object}]],
+                        showConfirmButton: false,
+                        timer: 1500
+                        });
+            } else{
+                 Swal.fire({
+                position: "top-end",
+                        icon: "Error",
+                        title: [[${resultadoUpdate.Object}]],
+                        showConfirmButton: false,
+                        timer: 1500
+                        });
+            }
+        </script>
+
+        <!--</script>-->
+    </body>
+</html>

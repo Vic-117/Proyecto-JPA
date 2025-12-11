@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+
+<html xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <title>TODO supply a title</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    </head>
+    <body class="container">
+        <br>
+
+        <div class="row">
+            <br>
+            <div class="input-group col-12  position-relative start-50 top-5 start-0 translate-middle-x">
+
+                <a th:href='@{/Usuario/CargaMasiva}' class="btn btn-outline-success col-3">Carga masiva</a>
+                <!--<br>-->
+                <a th:href='@{/Usuario/UsuarioDireccionForm}' class="btn btn-outline-success col-9">Agregar usuario</a>
+            </div> 
+
+            <br>
+            <div class="container">
+
+
+                <h1 class="mb-3 fw-bold">USUARIOS</h1>
+
+
+            </div>
+
+            <!--BARRA DE BUSQUEDA-->
+
+            <section class="container">
+                <form class="row mb-3" method="post" th:object="${UsuarioBusqueda}" th:action="@{Usuario/Search}">
+                    <div class="input-group ">
+                        <label class="input-group-text fw-bold col-1">BUSCAR</label> 
+                        <input type="text" class="form-control col-2" placeholder="Nombre"  th:field="*{Nombre}"/>
+                        <input type="text" class="form-control col-2" placeholder="Apellido Paterno"  th:field="*{ApellidoPaterno}"/>
+                        <input type="text" class="form-control col-2" placeholder="Apellido Materno" th:field="*{ApellidoMaterno}" />
+                        <!--<input type="text" class="form-control" placeholder="Rol" th:field="*{rol.nombre}"/>-->
+
+                        <select class="form-control col-2"  th:field="*{rol.idRol}">
+                            <option value="0">Selecciona un rol</option>
+                            <option th:each="rol:${Roles}"  th:text="${rol.nombre}" th:value="${rol.idRol}"></option>
+                        </select>    
+
+
+                        <button type="submit" class="btn btn-warning"><i class="bi bi-search"></i></button>
+                    </div>
+
+                </form>
+            </section>
+
+
+            <table class="table table-primary table-striped-columns  table-hover table-responsive col-sm-12" >
+                <!--cabeceras de tabla-->
+                <th class="col-3 " style="color:green">Nombre Completo</th>
+                <th class="col-4" style="color:green">Información</th>
+                <th class="col-4" style="color:green">Direccion</th>
+                <th class="col-1" style="color:green">Acciones</th> 
+
+                <!--filas de la tabla-->
+                <tr th:each = "usuario:${Usuarios}">
+
+                    <!--celdas/datos de la tabla-->
+                    <td th:text="|${usuario.nombre} ${usuario.apellidoPaterno} ${usuario.apellidoMaterno}|"/>
+
+                    <td th:utext="|<b> Correo:</b> ${usuario.email}.<br><b>Fecha de Nacimiento:</b> ${usuario.fechaNacimiento}<br><b>Sexo:</b> ${usuario.sexo} <br><b>Telefono:</b> 
+                        ${usuario.telefono}<br><b>Celular:</b> ${usuario.celular} <br><b>Curp:</b> ${usuario.curp}<br><b>Rol:</b> ${usuario.rol.idRol} |"/>
+
+                    <td >
+                        <ul th:if="${usuario.Direcciones !=null}" >
+                            <li th:each = "direccion:${usuario.Direcciones}" th:text="|Calle. ${direccion.calle}. No.Interior. ${direccion.numeroInterior}. No.Exterior. ${direccion.numeroExterior}. CodPos. ${direccion.colonia.CodigoPostal}. col. ${direccion.colonia.nombre}|"></li>
+                        </ul>
+                        <ul th:unless="${usuario.Direcciones ==null}" >
+                            <p ></p>
+                        </ul>
+
+
+
+                    <td>
+                        <!--<button class="btn btn-danger" th:href="@{Usuario/delete/{idUsuario} (idUsuario = ${usuario.IdUsuario})}">-->
+                        <!--Llamamos a la funcion de forma dinamica con thymeleaf-->
+                        <button class="btn btn-danger" th:onclick="|EliminarUsuario(${usuario.idUsuario})|">
+                            <i class="bi bi-trash-fill"></i>
+                        </button>
+                        <a href="url" class="btn btn-info" th:href="@{/Usuario/detail/{idUsuario} (idUsuario=${usuario.idUsuario})}">
+
+
+                            <i class="bi bi-vector-pen"></i>
+                        </a>
+
+
+                    </td>
+
+
+                </tr>
+
+
+
+            </table>
+        </div>
+
+
+        <script th:if="${resultDelete}" th:inline="javascript">
+            console.log([[${resultDelete}]]);
+            if ([[${resultDelete.Correct}]]){
+            Swal.fire({
+            position: "top-end",
+                    icon: "success",
+                    title: "Realizado",
+                    text:[[${resultDelete.Object}]],
+            });
+            } else{
+            Swal.fire({
+            position: "top-end",
+                    icon: "Error",
+                    title: "We have some problems...",
+                    text:[[${resultDelete.Object}]],
+            });
+            }
+        </script>
+
+
+
+        <script>
+            function EliminarUsuario(idUsuario) {
+            Swal.fire({
+            title: "Are you sure?",
+                    text: "You won't be able to revert this!",
+                    icon: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#3085d6",
+                    cancelButtonColor: "#d33",
+                    confirmButtonText: "Yes, delete it!"
+            }).then((result) => {
+            if (result.isConfirmed) {
+
+            window.location.href = "/Usuario/delete/" + idUsuario;
+            }
+            });
+            }
+
+        </script>
+
+        <script th:if="${ResultAgregar}" th:inline="javascript">
+
+
+
+
+
+            Swal.fire({
+            position: "top-end",
+                    icon: "success",
+                    title: [[${ResultAgregar}]],
+                    showConfirmButton: false,
+                    timer: 1500
+            });
+
+        </script>
+
+    </body>
+</html>

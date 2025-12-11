@@ -1,0 +1,505 @@
+
+package vPerez.ProgramacionNCapasNov2025.Controller;
+
+import jakarta.servlet.http.HttpSession;
+import jakarta.validation.Valid;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
+import java.sql.Date;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
+import org.springframework.validation.ObjectError;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import vPerez.ProgramacionNCapasNov2025.DAO.ColoniaDAOImplementation;
+import vPerez.ProgramacionNCapasNov2025.DAO.DireccionDAOImplementation;
+import vPerez.ProgramacionNCapasNov2025.DAO.EstadoDAOImplementation;
+import vPerez.ProgramacionNCapasNov2025.DAO.MunicipioDAOImplementation;
+import vPerez.ProgramacionNCapasNov2025.DAO.PaisDAOImplementation;
+import vPerez.ProgramacionNCapasNov2025.DAO.RolDAOImplementation;
+import vPerez.ProgramacionNCapasNov2025.DAO.UsuarioDAOImplementation;
+import vPerez.ProgramacionNCapasNov2025.DAO.UsuarioJpaDAOImplementation;
+import vPerez.ProgramacionNCapasNov2025.ML.Colonia;
+import vPerez.ProgramacionNCapasNov2025.ML.Direccion;
+import vPerez.ProgramacionNCapasNov2025.ML.ErrorCarga;
+import vPerez.ProgramacionNCapasNov2025.ML.Pais;
+import vPerez.ProgramacionNCapasNov2025.ML.Result;
+import vPerez.ProgramacionNCapasNov2025.ML.Rol;
+import vPerez.ProgramacionNCapasNov2025.ML.Usuario;
+import vPerez.ProgramacionNCapasNov2025.service.ValidationService;
+
+@Controller // Sirve para mapear interacciones
+@RequestMapping("Usuario")
+public class UsuarioController {
+
+    @Autowired //Inyeccion automatica de dependencias
+    private UsuarioDAOImplementation usuarioDaoImplementation;
+
+    @Autowired
+    private RolDAOImplementation rolDaoImplementation;
+
+    @Autowired
+    private DireccionDAOImplementation direccionDaoImplementation;
+
+    @Autowired
+    private PaisDAOImplementation paisDaoImplementation;
+
+    @Autowired
+    private EstadoDAOImplementation estadoDaoImplementation;
+
+    @Autowired
+    private MunicipioDAOImplementation municipioDaoImplementation;
+
+    @Autowired
+    private ColoniaDAOImplementation coloniaDaoImplementation;
+
+    @Autowired
+    private ValidationService ValidationService;
+
+    @Autowired
+    private UsuarioJpaDAOImplementation usuarioJpaDAOImplementation;
+    
+//    @Autowired
+//private ModelMapper modelMapper;
+    
+    @GetMapping
+    public String getAll(Model model) {
+
+        //model permite cargar informacion desde el backend en la vistas(frontend)
+//        Result result = usuarioDaoImplementation.GetAll();
+        Result result = usuarioJpaDAOImplementation.getAll();
+        model.addAttribute("Usuarios", result.Objects);
+        model.addAttribute("UsuarioBusqueda", new Usuario());//creando usuario(vacio) para que pueda mandarse la busqueda
+        Result resultRoles = rolDaoImplementation.getAll();
+        model.addAttribute("Roles", resultRoles.Objects);
+
+        return "Index";
+    }
+
+    @GetMapping("UsuarioDireccionForm")
+    public String showAlumnoDireccion(Model model, RedirectAttributes redirectAttributes) {
+        Result result = rolDaoImplementation.getAll();
+        Result resultPais = paisDaoImplementation.getAll();
+        model.addAttribute("Roles", result.Objects);
+        model.addAttribute("Paises", resultPais.Objects);
+        model.addAttribute("Usuario", new Usuario());
+        return "UsuarioDireccionForm";
+    }
+
+    @PostMapping("add")
+    public String addAlumnoDireccion(@Valid @ModelAttribute("Usuario") Usuario usuario, BindingResult bindingResult, Model model, RedirectAttributes redirectAttributes) {
+
+        if (usuario.getIdUsuario() == 0 && usuario.direcciones.get(0).getIdDireccion() == 0) { // agregar usuario direccion
+            
+            
+            if (bindingResult.hasErrors()) {
+                Result result = rolDaoImplementation.getAll();
+                model.addAttribute("Roles", result.Objects);
+                model.addAttribute("Usuario", usuario);
+                //AGREGADO RECIENTEMENTE
+                if (result.Correct) {
+                    redirectAttributes.addFlashAttribute("ErroresC", result.Correct);
+                } else {
+                    redirectAttributes.addFlashAttribute("ErroresC", result.Correct);
+                }
+                return "UsuarioDireccionForm";
+            } else {
+                //AGREGADO RECIENTEMENTE SOLO EL IF
+//                Result result = usuarioDaoImplementation.Add(usuario); AQUI SE AGREGA
+
+                ModelMapper modelMapper = new ModelMapper();
+                
+                vPerez.ProgramacionNCapasNov2025.JPA.Usuario usuarioJpa = modelMapper.map(usuario,  vPerez.ProgramacionNCapasNov2025.JPA.Usuario.class);
+
+
+                 Result result = usuarioJpaDAOImplementation.add(usuarioJpa);
+                 
+                 
+                 
+                 
+                 
+                 
+                if (!result.Correct) {
+                    model.addAttribute("ErroresC", "Sucedio un error.");
+                    return "UsuarioDireccionForm";
+                }
+
+                redirectAttributes.addFlashAttribute("ResultAgregar", "El usuario se agregó con exito"); // Agregado
+
+            }
+
+            
+            
+            
+            
+            
+            
+            
+            
+        } else if (usuario.getIdUsuario() > 0 && usuario.direcciones.get(0).getIdDireccion() == -1) { // editar usuario
+
+            //AGREGADO RECIENTEMENTE
+            Result resultUpdateUsuario = usuarioDaoImplementation.UpdateUsuario(usuario);
+             
+            if (resultUpdateUsuario.Correct) {
+               resultUpdateUsuario.Object = "Exito al actualizar";
+            }else{
+                 resultUpdateUsuario.Object = "Error al actualizar";
+            }
+            redirectAttributes.addFlashAttribute("resultadoUpdate", resultUpdateUsuario);
+//            return "detalleUsuario";
+            return "redirect:/Usuario/detail/"+usuario.getIdUsuario();
+
+        } else if ((usuario.getIdUsuario() > 0 && usuario.direcciones.get(0).getIdDireccion() > 0)) { // editar direccion
+            return "redirect:/Usuario";
+        } else if ((usuario.getIdUsuario() > 0 && usuario.direcciones.get(0).getIdDireccion() == 0)) { // agregar direccion
+            return "redirect:/Usuario";
+        }
+
+        return "redirect:/Usuario";
+    }
+
+    @GetMapping("delete/{idUsuario}")
+    public String delete(@PathVariable("idUsuario") int idUsuario, RedirectAttributes redirectAttributes) {
+
+        Result resultDelete = usuarioDaoImplementation.Delete(idUsuario);
+//        Result resultDelete = new Result();
+//        resultDelete.Correct = true;
+        if (resultDelete.Correct) {
+            resultDelete.Object = "El usuario " + idUsuario + " se eliminó correctamente";
+        } else {
+            resultDelete.Object = "El usuario  no se pudo eliminar";
+        }
+        redirectAttributes.addFlashAttribute("resultDelete", resultDelete);
+        return "redirect:/Usuario";
+
+    }
+
+    @GetMapping("detail/{idUsuario}")
+    public String getUsuario(@PathVariable("idUsuario") int idUsuario, Model model, RedirectAttributes redirectAttributes) {
+        Result result = usuarioDaoImplementation.GetDireccionUsuarioById(idUsuario);
+        Result resultUsuario = usuarioDaoImplementation.GetById(idUsuario);
+        model.addAttribute("Usuario", result.Object);
+
+//            Result resultUpdate = usuarioDaoImplementation.UpdateUsuario(usuario);
+        Result resultUpdate = new Result();
+        resultUpdate.Correct = true;
+        if (resultUpdate.Correct) {
+            resultUpdate.Object = "Usuario actualizado" + idUsuario;
+        } else {
+            resultUpdate.Object = "Usuario  NO  actualizado" + idUsuario;
+        }
+        redirectAttributes.addFlashAttribute("resultUpdateUsuario", resultUpdate);
+        redirectAttributes.addFlashAttribute("usuario", resultUsuario);
+
+        return "detalleUsuario";
+    }
+
+    @GetMapping("getEstadoByPais/{idPais}")
+    @ResponseBody
+    public Result getEstadoByPais(@PathVariable int idPais) {
+        Result result = estadoDaoImplementation.getByPais(idPais);
+
+        return result;
+    }
+
+    @GetMapping("getMunicipioByEstado/{idEstado}")
+    @ResponseBody
+    public Result getMunicipioByEstado(@PathVariable("idEstado") int idEstado) {
+        Result result = municipioDaoImplementation.getByEstado(idEstado);
+        return result;
+    }
+
+    @GetMapping("getColoniaByMunicipio/{idMunicipio}")
+    @ResponseBody
+    public Result getColoniaByMunicipio(@PathVariable("idMunicipio") int idMunicipio) {
+        Result result = coloniaDaoImplementation.getColoniaByMunicipio(idMunicipio);
+        return result;
+    }
+
+    //SOLO CARGA LA PAGINA(PARTES DEL FORMULARIO)
+    @GetMapping("/formularioEditable")//----------->>>>>>>>>
+    public String getUsuarioForm(@RequestParam int idUsuario, @RequestParam(required = false) Integer idDireccion, Model model, RedirectAttributes redirectAttributes) {
+
+        if (idDireccion == null) {
+            //modificar usuario
+            Result resultRol = rolDaoImplementation.getAll();
+            Result result = usuarioDaoImplementation.GetById(idUsuario);
+            model.addAttribute("Roles", resultRol.Objects);
+
+            Usuario usuario = (Usuario) result.Object;
+            usuario.direcciones = new ArrayList<>();
+            usuario.direcciones.add(new Direccion());
+            usuario.direcciones.get(0).setIdDireccion(-1);
+
+            model.addAttribute("Usuario", usuario);
+
+            return "UsuarioDireccionForm";
+        } else if (idDireccion == 0) {
+            //guardar
+            Result resultUsuario = direccionDaoImplementation.getDireccionByUsuario(idUsuario);
+            model.addAttribute("Paises", paisDaoImplementation.getAll().Objects);
+            model.addAttribute("Usuario", (Usuario) resultUsuario.Object);
+
+            return "UsuarioDireccionForm";
+        } else {
+            //editar direccion
+
+            Result resultDireccion = direccionDaoImplementation.getById(idDireccion);
+            Result resultPais = paisDaoImplementation.getAll();
+            
+            model.addAttribute("Usuario", resultDireccion.Object);
+            model.addAttribute("Paises", resultPais.Objects);
+
+            
+
+            return "UsuarioDireccionForm";
+
+        }
+
+    }
+
+    //Carga la pagina de carga masiva
+    @GetMapping("CargaMasiva")
+    public String CargaMasiva() {
+        return "CargaMasiva";
+    }
+
+    @PostMapping("/CargaMasiva")
+    public String CargaMasiva(@ModelAttribute MultipartFile archivo, Model model, HttpSession sesion) throws IOException {
+
+        //CARGA DE ARCHIVOS
+        //divide el nombre del archivo en 2 partes, una es el nombre y la otra es despues del punto(extension) 
+        //Para revisar que sea la extensión solicitada
+        String extension = archivo.getOriginalFilename().split("\\.")[1];
+
+        //Obteniendo la ruta base la que viene del disco del sistema
+        String ruta = System.getProperty("user.dir");
+
+        // Ruta desde el proyecto
+        String rutaArchivo = "src\\main\\resources\\archivos";
+
+        //Obteniendo la fecha para que sirva de id
+        String fecha = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"));
+
+        //Esta es la ruta absoluta del archivo(donde se va a guardar en el proyecto)
+        String rutaAbsoluta = ruta + "/" + rutaArchivo + "/" + fecha + archivo.getOriginalFilename();
+
+        archivo.transferTo(new File(rutaAbsoluta));
+//        Files.copy(archivo.getInputStream(), Paths.get(rutaAbsoluta));
+        List<Usuario> usuarios = new ArrayList<>();
+
+        //¿Cual archivo debe leer?
+        if (extension.equals("txt")) {
+            usuarios = LeerArchivo(new File(rutaAbsoluta));
+        } else {
+            usuarios = LeerArchivoExcel(new File(rutaAbsoluta));
+        }
+
+        //validacion de archivo
+        List<ErrorCarga> errores = validarDatos(usuarios);
+        model.addAttribute("Errores", errores);
+        if (!errores.isEmpty()) {
+            model.addAttribute("Errores", errores);//Mandando errores
+            model.addAttribute("isError", true);
+
+        } else {
+            model.addAttribute("isError", false);
+            sesion.setAttribute("archivoCargaMasiva", rutaAbsoluta);//Añadiendo atributos a la ruta
+        }
+
+        return "CargaMasiva";
+    }
+
+    public List<Usuario> LeerArchivo(File archivo) {//
+        List<Usuario> usuarios = new ArrayList<>();
+        try (
+                //                InputStream inputStream = archivo.getInputStream(); //inpuStream lee los bytes de un archivo, en este caso el archivo que le estamos indicando
+                //Lee texto desde un archivo de entrada(nuestro input stream):
+                //                 BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream))) {
+
+                BufferedReader bufferedReader = new BufferedReader(new FileReader(archivo))) {
+
+            bufferedReader.readLine(); //solo lee el encabezado que añadimos al txt
+            String linea;
+            while ((linea = bufferedReader.readLine()) != null) {
+                //datos representa cada columna(campo)
+                String[] datos = linea.split("\\|");
+
+                Usuario usuario = new Usuario();
+
+                usuario.setNombre(datos[0].trim());
+                usuario.setApellidoPaterno(datos[1].trim());
+                usuario.setApellidoMaterno(datos[2].trim());
+                usuario.setEmail(datos[3].trim());
+                usuario.setPassword(datos[4].trim());
+//                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+                SimpleDateFormat formato = new SimpleDateFormat("dd/MM/yyyy");
+                usuario.setFechaNacimiento(formato.parse(datos[5]));
+                usuario.rol = new Rol();
+                usuario.rol.setIdRol(Integer.valueOf(datos[6].trim())); // le quité lso espacios para que fuese un formato que pueda transformar
+                usuario.setSexo(datos[7].trim());
+                usuario.setTelefono(datos[8].trim());
+                usuario.setCelular(datos[9].trim());
+                usuario.setCurp(datos[10].trim());
+                usuario.direcciones = new ArrayList<>();
+                usuario.direcciones.add(new Direccion());
+                usuario.direcciones.get(0).setCalle(datos[11].toString().trim());
+                usuario.direcciones.get(0).setNumeroInterior(datos[12].toString().trim());
+                usuario.direcciones.get(0).setNumeroExterior(datos[13].toString().trim());
+                usuario.direcciones.get(0).colonia = new Colonia();
+                usuario.direcciones.get(0).colonia.setIdColonia(Integer.valueOf(datos[14].trim()));
+
+                usuarios.add(usuario);
+
+                System.out.println("leyendo datos: " + linea);
+            }
+
+        } catch (Exception ex) {
+            System.out.println(ex.getLocalizedMessage());
+        }
+        return usuarios;
+    }
+
+    public List<Usuario> LeerArchivoExcel(File archivo) {
+        List<Usuario> usuarios = new ArrayList<>();
+//Cambió de archivo.getInputStream() a archivo
+        try (XSSFWorkbook workbook = new XSSFWorkbook(archivo)) {
+            XSSFSheet sheet = workbook.getSheetAt(0);
+            for (Row row : sheet) {
+                if (row.getRowNum() == 0) {
+                    System.out.println("Encabezados");
+                } else {
+
+                    Usuario usuario = new Usuario();
+                    usuario.setNombre(row.getCell(0).toString());
+                    usuario.setApellidoPaterno(row.getCell(1).toString());
+                    usuario.setApellidoMaterno(row.getCell(2).toString());
+                    usuario.setEmail(row.getCell(3).toString());
+                    usuario.setPassword(row.getCell(4).toString());
+                    SimpleDateFormat formatoFecha = new SimpleDateFormat("dd/MM/yyyy");
+                    usuario.setFechaNacimiento(formatoFecha.parse(row.getCell(5).toString()));
+                    usuario.rol = new Rol();
+                    int IdRol = Integer.parseInt(row.getCell(6).toString());
+                    usuario.rol.setIdRol(IdRol);
+                    //  usuario.rol.setIdRol((Float.valueOf(row.getCell(6).toString().trim())).intValue());
+                    usuario.setSexo(row.getCell(7).toString());  //datos nulos
+                    usuario.setTelefono(row.getCell(8).toString());//
+                    usuario.setCelular(row.getCell(9).toString());
+                    usuario.setCurp(row.getCell(10).toString());
+                    usuario.direcciones = new ArrayList<>();
+                    usuario.direcciones.add(new Direccion());
+                    usuario.direcciones.get(0).setCalle(row.getCell(11).toString());
+                    usuario.direcciones.get(0).setNumeroInterior(row.getCell(12).toString());
+                    usuario.direcciones.get(0).setNumeroExterior(row.getCell(13).toString());
+                    usuario.direcciones.get(0).colonia = new Colonia();
+                    usuario.direcciones.get(0).colonia.setIdColonia(Integer.parseInt(row.getCell(14).toString()));
+                    usuarios.add(usuario);
+                }
+
+            }
+
+        } catch (Exception ex) {
+            System.out.println(ex.getCause() + " :" + ex.getLocalizedMessage());
+        }
+        return usuarios;
+    }
+
+    //Lista de errores (contendrá todos los atributos de la clase)
+    public List<ErrorCarga> validarDatos(List<Usuario> usuarios) {
+        List<ErrorCarga> erroresCarga = new ArrayList<>();//Se almacenarán todos los errores
+        int lineaError = 0;
+
+        //Iterando sobre la lista que le pasamos al metodo como argumento
+        for (Usuario usuario : usuarios) {
+            List<ObjectError> errors = new ArrayList();
+            lineaError++;
+            BindingResult bindingResultUsuario = ValidationService.validateObjects(usuario);//validando cada usuario
+            if (bindingResultUsuario.hasErrors()) {
+                errors.addAll(bindingResultUsuario.getAllErrors());
+            }
+            if (usuario.direcciones.get(0) != null) {
+                BindingResult bindingDireccion = ValidationService.validateObjects(usuario.direcciones.get(0));
+                if (bindingDireccion.hasErrors()) {
+                    errors.addAll(bindingDireccion.getAllErrors());
+                }
+            }
+//            List<ObjectError> errores = bindingResult.getAllErrors(); //Obteniendo los errores y guardandolos
+
+            for (ObjectError error : errors) {
+                FieldError fieldError = (FieldError) error;//obteniendo cada error especifico en cada campo(field)
+                ErrorCarga errorCarga = new ErrorCarga();//Instancia de DTO ErrorCarga
+                errorCarga.linea = lineaError;
+                errorCarga.campo = fieldError.getField();//obtiendo el campo del error
+                errorCarga.descripcion = fieldError.getDefaultMessage();//guardando mensaje de error
+                erroresCarga.add(errorCarga); //Guardando cada error en la lista de errores
+            }
+        }
+
+//        model.addAttribute("Errores",erroresCarga);
+        return erroresCarga;
+    }
+
+    @GetMapping("/CargaMasiva/Procesar")
+    public String ProcesarArchivo(HttpSession sesion, Model model) {
+        //Obteniendo ruta del archivo que se registró en metodo CargaMasiva()
+        String ruta = sesion.getAttribute("archivoCargaMasiva").toString();
+        String extensionArchivo = new File(ruta).getName().split("\\.")[1];
+        Result result;
+
+        if (extensionArchivo.equals("txt")) {
+            List<Usuario> usuarios = LeerArchivo(new File(ruta));
+            usuarioDaoImplementation.AddMany(usuarios);
+
+        } else {
+            //Guardando usuarios de la lista de usuarios creada con el metodo leer archivo
+            List<Usuario> usuarios = LeerArchivoExcel(new File(ruta));
+            usuarioDaoImplementation.AddMany(usuarios);
+
+        }
+        sesion.removeAttribute("archivoCargaMasiva");
+//        new File(ruta).delete();//Ya cuando se terminaron las operaciones con el archivo, se elimina de la carpeta
+
+        return "redirect:/Usuario";
+    }
+
+    @PostMapping("/Search")
+    public String buscarUsuarios(@ModelAttribute("Usuario") Usuario usuario, Model model) {
+        model.addAttribute("UsuarioBusqueda", new Usuario());//creando usuario(vacio) para que pueda mandarse la busqueda
+        Result resultSearch = usuarioDaoImplementation.search(usuario);
+        Result resultRoles = rolDaoImplementation.getAll();
+        model.addAttribute("Roles", resultRoles.Objects);
+        model.addAttribute("Usuarios", resultSearch.Objects);
+        return "Index";
+
+    }
+
+}
