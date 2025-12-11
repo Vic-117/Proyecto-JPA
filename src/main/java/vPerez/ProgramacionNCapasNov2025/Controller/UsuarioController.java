@@ -1,4 +1,3 @@
-
 package vPerez.ProgramacionNCapasNov2025.Controller;
 
 import jakarta.servlet.http.HttpSession;
@@ -41,6 +40,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import vPerez.ProgramacionNCapasNov2025.DAO.ColoniaDAOImplementation;
 import vPerez.ProgramacionNCapasNov2025.DAO.DireccionDAOImplementation;
+import vPerez.ProgramacionNCapasNov2025.DAO.DireccionJpaDAOImplementation;
 import vPerez.ProgramacionNCapasNov2025.DAO.EstadoDAOImplementation;
 import vPerez.ProgramacionNCapasNov2025.DAO.MunicipioDAOImplementation;
 import vPerez.ProgramacionNCapasNov2025.DAO.PaisDAOImplementation;
@@ -86,10 +86,11 @@ public class UsuarioController {
 
     @Autowired
     private UsuarioJpaDAOImplementation usuarioJpaDAOImplementation;
-    
+
+    @Autowired
+    private DireccionJpaDAOImplementation direccionJpaDAOImplementation;
 //    @Autowired
 //private ModelMapper modelMapper;
-    
     @GetMapping
     public String getAll(Model model) {
 
@@ -118,35 +119,27 @@ public class UsuarioController {
     public String addAlumnoDireccion(@Valid @ModelAttribute("Usuario") Usuario usuario, BindingResult bindingResult, Model model, RedirectAttributes redirectAttributes) {
 
         if (usuario.getIdUsuario() == 0 && usuario.direcciones.get(0).getIdDireccion() == 0) { // agregar usuario direccion
-            
-            
+
             if (bindingResult.hasErrors()) {
                 Result result = rolDaoImplementation.getAll();
                 model.addAttribute("Roles", result.Objects);
                 model.addAttribute("Usuario", usuario);
-                //AGREGADO RECIENTEMENTE
                 if (result.Correct) {
                     redirectAttributes.addFlashAttribute("ErroresC", result.Correct);
                 } else {
                     redirectAttributes.addFlashAttribute("ErroresC", result.Correct);
                 }
-                return "UsuarioDireccionForm";
+                return "Usuario";
             } else {
                 //AGREGADO RECIENTEMENTE SOLO EL IF
-//                Result result = usuarioDaoImplementation.Add(usuario); AQUI SE AGREGA
+         
 
                 ModelMapper modelMapper = new ModelMapper();
-                
-                vPerez.ProgramacionNCapasNov2025.JPA.Usuario usuarioJpa = modelMapper.map(usuario,  vPerez.ProgramacionNCapasNov2025.JPA.Usuario.class);
 
+                vPerez.ProgramacionNCapasNov2025.JPA.Usuario usuarioJpa = modelMapper.map(usuario, vPerez.ProgramacionNCapasNov2025.JPA.Usuario.class);
 
-                 Result result = usuarioJpaDAOImplementation.add(usuarioJpa);
-                 
-                 
-                 
-                 
-                 
-                 
+                Result result = usuarioJpaDAOImplementation.add(usuarioJpa);
+
                 if (!result.Correct) {
                     model.addAttribute("ErroresC", "Sucedio un error.");
                     return "UsuarioDireccionForm";
@@ -156,30 +149,37 @@ public class UsuarioController {
 
             }
 
-            
-            
-            
-            
-            
-            
-            
-            
         } else if (usuario.getIdUsuario() > 0 && usuario.direcciones.get(0).getIdDireccion() == -1) { // editar usuario
 
-            //AGREGADO RECIENTEMENTE
-            Result resultUpdateUsuario = usuarioDaoImplementation.UpdateUsuario(usuario);
-             
+            ModelMapper modelMapper= new ModelMapper();
+            
+            vPerez.ProgramacionNCapasNov2025.JPA.Usuario usuarioEntidad = modelMapper.map(usuario,  vPerez.ProgramacionNCapasNov2025.JPA.Usuario.class);
+            
+            Result resultUpdateUsuario = usuarioJpaDAOImplementation.update(usuarioEntidad);
+
             if (resultUpdateUsuario.Correct) {
-               resultUpdateUsuario.Object = "Exito al actualizar";
-            }else{
-                 resultUpdateUsuario.Object = "Error al actualizar";
+                resultUpdateUsuario.Object = "Exito al actualizar";
+            } else {
+                resultUpdateUsuario.Object = "Error al actualizar";
             }
             redirectAttributes.addFlashAttribute("resultadoUpdate", resultUpdateUsuario);
 //            return "detalleUsuario";
-            return "redirect:/Usuario/detail/"+usuario.getIdUsuario();
+            return "redirect:/Usuario/detail/" + usuario.getIdUsuario();
 
         } else if ((usuario.getIdUsuario() > 0 && usuario.direcciones.get(0).getIdDireccion() > 0)) { // editar direccion
+            
+            ModelMapper modelMapper = new ModelMapper();
+            vPerez.ProgramacionNCapasNov2025.JPA.Usuario usuarioJPA = modelMapper.map(usuario,  vPerez.ProgramacionNCapasNov2025.JPA.Usuario.class);
+            usuarioJPA.direcciones.get(0).Usuario = new vPerez.ProgramacionNCapasNov2025.JPA.Usuario();
+            usuarioJPA.direcciones.get(0).Usuario.setIdUsuario(usuario.getIdUsuario());
+            Result resultUpdateDireccion = direccionJpaDAOImplementation.update( usuarioJPA.direcciones.get(0));
+            
+            
             return "redirect:/Usuario";
+            
+            
+            
+            
         } else if ((usuario.getIdUsuario() > 0 && usuario.direcciones.get(0).getIdDireccion() == 0)) { // agregar direccion
             return "redirect:/Usuario";
         }
@@ -190,9 +190,7 @@ public class UsuarioController {
     @GetMapping("delete/{idUsuario}")
     public String delete(@PathVariable("idUsuario") int idUsuario, RedirectAttributes redirectAttributes) {
 
-        Result resultDelete = usuarioDaoImplementation.Delete(idUsuario);
-//        Result resultDelete = new Result();
-//        resultDelete.Correct = true;
+        Result resultDelete = usuarioJpaDAOImplementation.delete(idUsuario);
         if (resultDelete.Correct) {
             resultDelete.Object = "El usuario " + idUsuario + " se eliminó correctamente";
         } else {
@@ -203,6 +201,16 @@ public class UsuarioController {
 
     }
 
+    @GetMapping("direccion/delete/{idDireccion}/{idUsuario}")
+    public String deleteDireccion(@PathVariable("idDireccion") int idDireccion,@PathVariable("idUsuario")String idUsuario, RedirectAttributes redirectAttributes){
+        Result resultDelete = direccionJpaDAOImplementation.delete(idDireccion);
+        if(resultDelete.Correct){
+            redirectAttributes.addFlashAttribute("resultadoOperacion",resultDelete.Object);
+        }
+        
+        return "redirect:/Usuario/detail/"+idUsuario;//Lleva al endpoint
+//        return "Index; --- LLeva a una plantilla
+    }
     @GetMapping("detail/{idUsuario}")
     public String getUsuario(@PathVariable("idUsuario") int idUsuario, Model model, RedirectAttributes redirectAttributes) {
         Result result = usuarioDaoImplementation.GetDireccionUsuarioById(idUsuario);
@@ -275,11 +283,9 @@ public class UsuarioController {
 
             Result resultDireccion = direccionDaoImplementation.getById(idDireccion);
             Result resultPais = paisDaoImplementation.getAll();
-            
+
             model.addAttribute("Usuario", resultDireccion.Object);
             model.addAttribute("Paises", resultPais.Objects);
-
-            
 
             return "UsuarioDireccionForm";
 

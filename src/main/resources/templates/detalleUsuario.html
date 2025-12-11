@@ -63,7 +63,9 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
                                                     <!--@{/Usuario/formularioEditable?idUsuario=}+${Usuario.idUsuario}-->
                                             <i class="bi bi-pencil-square"></i>
                                         </a>
-                                        <a class="btn btn-danger">
+                                        <a class="btn btn-danger" th:href="@{/Usuario/direccion/delete/{idDireccion}/{idUsuario} (
+                                           idDireccion = ${direccion.idDireccion},idUsuario=${Usuario.idUsuario}
+                                           )}">
                                             <i class="bi bi-x-square"></i>
                                         </a>
                                 </div>

@@ -5,19 +5,17 @@
 package vPerez.ProgramacionNCapasNov2025.DAO;
 
 import vPerez.ProgramacionNCapasNov2025.JPA.Direccion;
-import vPerez.ProgramacionNCapasNov2025.JPA.Usuario;
 import vPerez.ProgramacionNCapasNov2025.ML.Result;
 
 /**
  *
  * @author digis
  */
-public interface IUsuarioJPA {
-    public Result getAll();
+public interface IDireccionJPA {
     
-    public Result add(Usuario usuario);
+    public Result update(Direccion direccion);
     
-    public Result update(Usuario usuario);
+    public Result delete(int idDireccion);
     
-    public Result delete(int idUsuario);
+    
 }
