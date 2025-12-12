@@ -40,7 +40,8 @@
         <form class="" method="post" th:object="${Usuario}" th:action="@{add}" style="margin:2rem; flex-direction: column">
 
             <input type="hidden" th:field="${Usuario.idUsuario}">
-            <input type="hidden" th:field="${Usuario.Direcciones[0].IdDireccion}">
+            <!--a veces da -1 y otras 1-->
+            <!--<input type="hidden" th:field="${Usuario.Direcciones[0].idDireccion}">-->
 
 
 
@@ -464,7 +465,7 @@
                         $("#ddlEstado").append(" <option>Selecciona un Estado</option>");
                         } else {
 
-                        //ajax para manejra peticiones azincronas
+                        //ajax para manejra peticiones asincronas
                         $.ajax({
                         url: "/Usuario/getEstadoByPais/" + $("#ddlPais").val(), //url de la peticion
                                 method: "GET", //tipo de accion

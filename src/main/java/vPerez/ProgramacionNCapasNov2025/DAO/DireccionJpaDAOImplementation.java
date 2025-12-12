@@ -5,10 +5,12 @@
 package vPerez.ProgramacionNCapasNov2025.DAO;
 
 import jakarta.persistence.EntityManager;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import vPerez.ProgramacionNCapasNov2025.JPA.Direccion;
+import vPerez.ProgramacionNCapasNov2025.JPA.Usuario;
 import vPerez.ProgramacionNCapasNov2025.ML.Result;
 
 /**
@@ -55,13 +57,34 @@ public class DireccionJpaDAOImplementation implements IDireccionJPA {
                 entityManager.remove(direccion);
                 result.Object = "Operacion realizada con exito";
                 result.Correct = true;
-                
+
             } else {
                 result.Object = "La operación fracasó con exito xd";
                 result.Correct = false;
             }
-            
 
+        } catch (Exception ex) {
+            result.Correct = false;
+            result.ErrorMesagge = ex.getLocalizedMessage();
+            result.ex = ex;
+        }
+        return result;
+    }
+
+    @Transactional
+    @Override
+    public Result add(Direccion direccion,int idUsuario) {
+        Result result = new Result();
+        try {
+            direccion.Usuario = new Usuario();
+            direccion.Usuario.setIdUsuario(idUsuario);
+            entityManager.persist(direccion);
+            result.Correct = true;
+            if (result.Correct) {
+                result.Object = "Realizado";
+            } else {
+                result.Object = "Fracaso";
+            }
         } catch (Exception ex) {
             result.Correct = false;
             result.ErrorMesagge = ex.getLocalizedMessage();

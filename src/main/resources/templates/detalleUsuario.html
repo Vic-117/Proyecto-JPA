@@ -13,24 +13,36 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
 
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
         <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+        <style>
+            #usuario1{
+                transition: all 1100ms ease-in-out;
+            }
+            #usuario1:hover{
+                transform: scale(1.3);
+                z-index: 100;
+                box-shadow: 1px 1px 10px buttonshadow;
+            }
+        </style>
     </head>
     <body class="container">
 
         <br>
-        <section class="container row col-12 mb-3" id="Seccion-Usuario" >
-            <div class="card col-2">
+        <!--SECCION DE USUARIO-->
+        <section class="container row col-12 mb-3 d-flex flex-row" style="align-items: center; height: 100vh" id="Seccion-Usuario" >
+            <div class="card col-3" id="usuario1"style="border:none">
 
                 <img class="card-img-thumbnail" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTNT31I-b-Jdf8bjPM-mm-V1qCpb-oudRLvtw&s"/>
 
-                <div class="card-title" th:text="|${Usuario.nombre} ${Usuario.apellidoPaterno} ${Usuario.apellidoMaterno}|"/>
+                <div class="card-title text-center fw-bold" th:text="|${Usuario.nombre} ${Usuario.apellidoPaterno} ${Usuario.apellidoMaterno}|"/>
 
 
             </div>
-            <div class="card col-10">
-                <div class="card-title" style="font-weight: 600; font-size: 1.5rem;">INFORMACION</div>
+            <div class="card col-9" >
+                <div class="card-title text-center" style="font-weight: 600; font-size: 1.5rem;">INFORMACION</div>
                 <div class="card-body">
+
                     <p th:utext="|<b>Email:</b> ${Usuario.email}|"></p>
-                
+
                     <p th:utext="|<b>Fecha Nacimiento:</b> ${Usuario.fechaNacimiento}|"></p>
                     <p th:utext="|<b>Rol:</b> ${Usuario.rol.idRol}|"></p>
                     <p th:utext="|<b>Sexo:</b> ${Usuario.sexo}|"></p>
@@ -38,7 +50,8 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
                     <p th:utext="|<b>Celular:</b> ${Usuario.celular}|"></p>
                     <p th:utext="|<b>Curp:</b> ${Usuario.curp}|"></p>
 
-                    <a href="url" class="btn btn-warning col-12" th:href="@{/Usuario/formularioEditable?idUsuario=}+${Usuario.idUsuario}">Editar</a>
+                    <!--<a href="url" class="btn btn-warning col-12" th:href="@{/Usuario/formularioEditable?idUsuario=}+${Usuario.idUsuario}">Editar</a>-->
+                    <a href="url" class="btn btn-warning col-12" data-bs-toggle="modal" data-bs-target="#my-modal" >Editar</a>
                 </div>
             </div>
 
@@ -46,29 +59,34 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
 
         </section>
         <br>
-
-        <section class="container col-12 row" id="Seccion-Direccion">
+        <!--SECCION DE DIRECCION-->
+        <section class="container col-12 row" id="Seccion-Direccion" style="height: 100vh; display: flex; align-content: space-around">
             <div class="card">
                 <div class="card-title" style="font-weight: bold; font-size: 2rem">DIRECCIONES</div>
                 <div class="card-body">
-                    <table class="table">
-                        <th class="col-10 table-primary">Direccion</th>
-                        <th class="col-12 table-info">Accion</th>
+                    <table class="table table-striped-columns">
+                        
+                        <!--<th class="col-10 table-primary">#</th>-->
+                        <th class="col-9 table-primary text-center">Direccion</th>
+                        <th class="col-3 table-info text-center">Accion</th>
 
                         <tr th:each="direccion:${Usuario.Direcciones}">
+                           
                             <td  th:text="|${direccion.calle} ${direccion.numeroInterior} ${direccion.numeroExterior}|"></td>
-                            <td>
+                            <td class="text-center">
+                        
                                 <div class="btn-group">
-                                        <a class="btn btn-warning" th:href="@{/Usuario/formularioEditable?idUsuario=}+${Usuario.idUsuario}+'&idDireccion='+${direccion.idDireccion}">
-                                                    <!--@{/Usuario/formularioEditable?idUsuario=}+${Usuario.idUsuario}-->
-                                            <i class="bi bi-pencil-square"></i>
-                                        </a>
-                                        <a class="btn btn-danger" th:href="@{/Usuario/direccion/delete/{idDireccion}/{idUsuario} (
-                                           idDireccion = ${direccion.idDireccion},idUsuario=${Usuario.idUsuario}
-                                           )}">
-                                            <i class="bi bi-x-square"></i>
-                                        </a>
+                                    <a class="btn btn-warning" th:href="@{/Usuario/formularioEditable?idUsuario=}+${Usuario.idUsuario}+'&idDireccion='+${direccion.idDireccion}">
+                                        <!--@{/Usuario/formularioEditable?idUsuario=}+${Usuario.idUsuario}-->
+                                        <i class="bi bi-pencil-square"></i>
+                                    </a>
+                                    <a class="btn btn-danger" th:href="@{/Usuario/direccion/delete/{idDireccion}/{idUsuario} (
+                                       idDireccion = ${direccion.idDireccion},idUsuario=${Usuario.idUsuario}
+                                       )}">
+                                        <i class="bi bi-x-square"></i>
+                                    </a>
                                 </div>
+                           
                             </td>
                         </tr>
                     </table>
@@ -76,28 +94,305 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
                 </div>
             </div>
 
+
+            <!--<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#my-modal">Ver modal</button>--> 
         </section>
+
         
+                                             <!--MODAL-->
+        <section class="modal fade" id="my-modal">
+            <div class="modal-dialog modal-xl">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Modal title</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                                                                                    <!--CUERPO DEL MODAL-->
+                    <div class="modal-body">
+
+
+
+
+                        <form class="" method="post" th:object="${Usuario}" th:action="@{add}" style="margin:2rem; flex-direction: column">
+
+                            <input type="hidden" th:field="${Usuario.idUsuario}">
+                            <input type="hidden" th:field="${Usuario.Direcciones[0].idDireccion}">
+
+
+
+                            <!--SECCION DEL USUARIO-->
+                            <section class="container" style="" >
+                                <center>
+                                    <br>
+                                    <h1 style="font-family: sans-serif; font-size: 2.5rem; font-weight: bold;
+                                        text-shadow: 3px 3px 1px #BFC9EB " >AGREGAR USUARIO
+                                    </h1>
+                                    <hr>
+                                </center>
+
+                                <div class=" row" style="">
+
+                                    <span class="container">
+                                        <i class="bi bi-person-circle "></i>
+                                        <b>Nombres:</b>
+                                    </span>
+
+                                    <input type ="text" placeholder="Nombres" class="form-control " th:field="*{nombre}" onkeypress="soloLetras(event, this)" >  
+
+                                    <span class="error-message mb-3 " style="font-size: 0.8rem" />
+                                    <span class="text-danger mb-3 "  th:if="${#fields.hasErrors('nombre')}" th:errors="${Usuario.nombre}" style="font-size: 0.8rem" />
+
+                                </div>
+
+                                <div class="row" style="" >
+                                    <span class="fw-bold">Apellidos:</span>
+
+                                    <input type="text" class="form-control mb-3" placeholder="Paterno"  th:field="*{apellidoPaterno}" onkeypress="soloLetras(event, this)">
+                                    <span class="text-danger " style="font-size: 0.8rem" th:if="${#fields.hasErrors('apellidoPaterno')}" th:errors="${Usuario.apellidoPaterno}" />
+
+                                    <input type="text" class="form-control" placeholder="Materno" th:field="*{apellidoMaterno}" onkeypress="soloLetras(event, this)">
+                                    <span class="error-message row" style="font-size: 0.8rem" />
+                                    <span class="text-danger col-2" style="font-size: 0.8rem;" th:if="${#fields.hasErrors('apellidoMaterno')}" th:errors="${Usuario.apellidoMaterno}" />
+                                </div>
+
+
+
+                                <br>
+
+
+                                <div class="row mb-3" style="">
+                                    <span class="fw-bold">
+                                        <i class="bi bi-envelope"></i> 
+                                        Correo:
+
+                                    </span>
+
+                                    <input type="text" class="form-control " placeholder="Correo" th:field="*{email}" onblur="emailValidator(this)">
+                                    <span class="text-danger " style="font-size: 0.8rem;" th:if="${#fields.hasErrors('email')}" th:errors ='${Usuario.email}' />
+                                    <span id="emailMessage" ></span>
+                                </div>
+
+
+                                <div class="row mb-3" style="">
+                                    <span class="fw-bold">Contraseña:</span>
+
+                                    <input type="password" placeholder="contraseña" class="form-control" th:field="*{password}" onblur="passVal(this)">
+
+                                    <span class="error-message mb-3 row" style="font-size: 0.8rem" />
+                                    <span class="text-danger  row" style="font-size: 0.8rem" th:if="${#fields.hasErrors('password')}" th:errors ="${Usuario.password}" />
+                                </div>
+
+
+
+
+                                <div class="row mb-3" style="">
+
+                                    <span class="input-group-text fw-bold"> <i class="bi bi-telephone"></i>Telefono:</span>
+                                    <input type = "number" placeholder="Telefono" class="form-control " th:field="*{telefono}" onblur="validarNumero(this)">
+
+                                    <span class="error-message mb-3 row" style="font-size: 0.8rem" />
+                                    <span class="text-danger  row" style="font-size: 0.8rem" th:if="${#fields.hasErrors('telefono')}" th:errors="${Usuario.telefono}" />
+
+                                </div>
+
+                                <div class="row" style="">
+
+                                    <span class="input-group-text fw-bold" > <i class="bi bi-phone"></i>celular</span>
+                                    <input type = "number" placeholder="Celular" class="form-control" th:field="*{celular}" onblur="validarNumero(this)">
+                                    <span class="error-message mb-3 row" style="font-size: 0.8rem" />
+                                    <span class="text-danger  row" style="font-size: 0.8rem" th:if="${#fields.hasErrors('celular')}" th:errors="${Usuario.celular}"/>
+                                    <span class="text-danger  row" style="font-size: 0.8rem" th:if="${#fields.hasErrors('telefono')}" th:errors="${Usuario.telefono}" />
+                                </div>
+
+
+
+
+
+                                <br>
+
+
+                                <div class="row mb-3" onmouseleave="validarSexo()" style="">
+                                    <span class="input-group-text fw-bold ">Sexo:</span>
+                                    <span class="input-group-text  col-3">Femenino:</span>
+                                    <div class="input-group-text col-1" style="background-color:#A8BCD1">
+                                        <input type = "radio" value="F" id="femenino" name="sexo" class="form-check-input mt-0" th:field="*{sexo}"   th:checked="*{sexo == 'F'}">
+
+
+                                    </div>
+                                    <span class="input-group-text  col-3">Masculino:</span>
+                                    <div class="input-group-text col-1" style="background:#A8BCD1 ">
+                                        <input type = "radio" value="M" id="masculino" name="sexo" class="form-check-input mt-0" th:field="*{sexo}" th:checked="*{sexo == 'M'}" >
+                                    </div>
+                                </div>
+
+
+
+                                <div class="row mb-3" style="">
+                                    <label class="input-group-text fw-bold ">Fecha de Nacimiento:</label>
+                                    <input type = "date" class="form-control col-sm-8 col-md-6" th:field="*{fechaNacimiento}" onblur="validarNacimiento(this)">
+                                    <span class="error-message mb-3 row" style="font-size: 0.8rem" />
+                                    <span class="text-danger  row" style="font-size: 0.8rem"  th:if="${#fields.hasErrors('fechaNacimiento')}" th:errors='${Usuario.fechaNacimiento}'/>
+
+                                </div>
+
+
+
+
+
+
+                                <div class="row" style="">
+                                    <label class="input-group-text fw-bold">CURP:</label>
+                                    <input type = "text" placeholder="CURP" class="form-control col-10" th:field="*{curp}" onblur="validarCurp(this)"> 
+                                    <span class="error-message mb-3 row" style="font-size: 0.8rem" />
+                                    <span class="text-danger  row" style="font-size: 0.8rem" th:if="${#fields.hasErrors('curp')}" th:errors="${Usuario.curp}"/>
+
+                                </div>
+
+                                <div class="row" style="" >
+                                    <span class="input-group-text fw-bold">Rol:</span>
+                                    <select class="form-control" th:field="*{Rol.idRol}" onblur="validarRol(this)">
+                                        <option value=0>Elige tu rol</option>
+                                        <option th:each="rol:${Roles}"  th:text="${rol.nombre}" th:value="${rol.idRol}" ></option>
+                                    </select>
+                                    <span class="error-message mb-3 row" style="font-size: 0.8rem" />
+                                    <span class="text-danger mb-3 row" style="font-size: 0.8rem" th:if="${#fields.hasErrors('rol.idRol')}" th:errors="$(Usuario.idRol}" />
+
+                                </div>
+
+
+
+                                <button type="submit" class="btn btn-success row col-12" th:if="${(Usuario.idUsuario !=0 && Usuario.direcciones[0].idDireccion == -1)}" >Actualizar</button>
+                            </section >
+                            <hr>
+
+
+
+
+<!--                            SECCION DE LA DIRECCION
+                            <section class="container " th:if="${(Usuario.idUsuario == 0 && Usuario.direcciones[0].idDireccion == 0)
+                                     || (Usuario.idUsuario !=0 && Usuario.direcciones[0].IdDireccion > 0 )
+                                     || (Usuario.IdUsuario != 0 && Usuario.direcciones[0].IdDireccion == 0) }">
+
+                                <h3 style="font-weight: bold">DIRECCIÓN DEL USUARIO</h3>
+
+
+                                <div class="row mb-3" style="">
+                                    <label class="input-group-text fw-bold">calle</label>
+                                    <input type="text" class="form-control mb-3" th:field="${Usuario.direcciones[0].calle}" onkeypress="validarCalle(event, this)">
+                                    <span class="error-message mb-3 row" style="font-size: 0.8rem" />
+                                    <span class="text-danger mb-3 row" style="font-size: 0.8rem" th:if="${#fields.hasErrors('direcciones[0].calle')}" th:errors="$(direcciones[0].calle)"/>
+                                </div>
+
+                                <div class="row  mb-3" style="">
+
+                                    <label class="input-group-text fw-bold">No.Interior</label>
+                                    <input type="text" class="form-control mb-3 " th:field="*{direcciones[0].numeroInterior}">
+                                </div>
+
+                                <div class="row  mb-3" style="">
+                                    <label class="input-group-text fw-bold">No.Exterior</label>
+                                    <input type="text" class="form-control" th:field="*{direcciones[0].numeroExterior}">
+
+                                </div>
+
+                                            <div class="row mb-3" style="">
+                                
+                                                <label class="input-group-text fw-bold ">Id Colonia</label>
+                                                <input type="text" class="form-control " th:field="*{direcciones[0].colonia.idColonia}">
+                                
+                                            </div>
+
+                                <div class="row  mb-3" style="">
+                                    <label class="input-group-text fw-bold" >Pais:</label>
+                                    <select class="form-control" id="ddlPais" >
+                                        th:field="${Usuario.direcciones[0].colonia.municipio.estado.pais}"
+                                                             usuario.direcciones.get(0).getColonia().getMunicipio().getEstado().pais.setIdPais(resultSet.getInt("IDPAIS"));
+                                        <option value="0">Elige un pais de la lista</option>
+                                        <option th:each="pais:${Paises}" th:value="${pais.idPais}" th:text="${pais.nombre}"></option>
+                                        <option  th:value="${pais.IdPais}" th:text="${pais.Nombre}"></option>
+                                    </select>
+                                </div>
+
+                                <div class="row mb-3">
+                                    <label class="input-group-text fw-bold" >Estado:</label>
+                                    <select  class="form-control" id="ddlEstado">
+                                        <option value=0>Selecciona un Estado</option>
+
+                                    </select>
+                                </div>
+
+                                <div class="row mb-3">
+                                    <label class="input-group-text fw-bold " >Municipio:</label>
+                                    <select  class="form-control" id="ddlMunicipio"  th:field="*{direcciones[0].colonia.municipio.idMunicipio}">
+                                        <option value=0>Selecciona un Municipio</option>
+                                    </select>
+                                </div>
+
+                                <div class="row mb-3">
+                                    <label class="input-group-text fw-bold" >Colonia:</label>
+                                    <select class="form-control" id="ddlColonia" th:field="*{direcciones[0].colonia.idColonia}">
+                                        <option value=0>Selecciona la Colonia</option>
+                                    </select>
+                                </div>
+
+
+
+
+
+
+
+                                <button type="submit" class="btn btn-success col-12" th:if="${(Usuario.idUsuario !=0 && Usuario.direcciones[0].IdDireccion > 0 )}">Editar</button> 
+                            </section>-->
+
+                            <button type="submit" class="btn btn-success col-12">Guardar</button> 
+
+
+
+
+                        </form>
+
+
+
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cerrar</button>
+                        <button type="button" class="btn btn-success">Guardar cambios</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+                                             
+                                             
+                                             <!--SCRIPTS-->
+        <script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
+
+        <script>
+            const myModal = document.getElementById('myModal')
+                    const myInput = document.getElementById('myInput')
+
+                    myModal.addEventListener('shown.bs.modal', () => {
+                    myInput.focus()
+                    })
+        </script>
         
-            
-             <script th:if="${resultadoUpdate}" th:inline="javascript">
-            console.log("Entró");
+        <script th:if="${resultadoUpdate}" th:inline="javascript">
+                    console.log("Entró");
             if ([[${resultadoUpdate.Correct}]]){
-                Swal.fire({
-                position: "top-end",
-                        icon: "success",
-                        title: [[${resultadoUpdate.Object}]],
-                        showConfirmButton: false,
-                        timer: 1500
-                        });
+            Swal.fire({
+            position: "top-end",
+                    icon: "success",
+                    title: [[${resultadoUpdate.Object}]],
+                    showConfirmButton: false,
+                    timer: 1500
+            });
             } else{
-                 Swal.fire({
-                position: "top-end",
-                        icon: "Error",
-                        title: [[${resultadoUpdate.Object}]],
-                        showConfirmButton: false,
-                        timer: 1500
-                        });
+            Swal.fire({
+            position: "top-end",
+                    icon: "Error",
+                    title: [[${resultadoUpdate.Object}]],
+                    showConfirmButton: false,
+                    timer: 1500
+            });
             }
         </script>
 

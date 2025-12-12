@@ -13,9 +13,13 @@ import vPerez.ProgramacionNCapasNov2025.ML.Result;
  */
 public interface IDireccionJPA {
     
+    public Result add(Direccion direccion,int idUsuario);
+    
     public Result update(Direccion direccion);
     
     public Result delete(int idDireccion);
+    
+    
     
     
 }

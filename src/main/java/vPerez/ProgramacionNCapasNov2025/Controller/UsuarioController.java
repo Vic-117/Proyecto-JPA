@@ -175,13 +175,19 @@ public class UsuarioController {
             Result resultUpdateDireccion = direccionJpaDAOImplementation.update( usuarioJPA.direcciones.get(0));
             
             
-            return "redirect:/Usuario";
+//            return "redirect:/Usuario";
             
             
             
             
         } else if ((usuario.getIdUsuario() > 0 && usuario.direcciones.get(0).getIdDireccion() == 0)) { // agregar direccion
-            return "redirect:/Usuario";
+            ModelMapper modelMapper = new ModelMapper();
+            vPerez.ProgramacionNCapasNov2025.JPA.Direccion direccionJpa = modelMapper.map(usuario.direcciones.get(0),  vPerez.ProgramacionNCapasNov2025.JPA.Direccion.class);
+            Result resultAddDireccion = direccionJpaDAOImplementation.add(direccionJpa,usuario.getIdUsuario());
+            if(resultAddDireccion.Correct){
+                redirectAttributes.addFlashAttribute("resultadoOperacion",resultAddDireccion.Object);
+            }
+            return "redirect:/Usuario/detail/"+usuario.getIdUsuario();
         }
 
         return "redirect:/Usuario";
@@ -280,7 +286,7 @@ public class UsuarioController {
             return "UsuarioDireccionForm";
         } else {
             //editar direccion
-
+//            idDireccion=0;
             Result resultDireccion = direccionDaoImplementation.getById(idDireccion);
             Result resultPais = paisDaoImplementation.getAll();
 
