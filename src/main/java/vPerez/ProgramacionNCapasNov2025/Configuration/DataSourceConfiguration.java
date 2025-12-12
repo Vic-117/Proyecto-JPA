@@ -28,11 +28,11 @@ public class DataSourceConfiguration {
         //Url de la bd para la conexión
         dataSource.setUrl("jdbc:oracle:thin:@localhost:1521:orcl");
         //nombre de usuario para acceder a la db
-        dataSource.setUsername(" VPerezProgramacionNCapasNoviembre25");
-//        dataSource.setUsername(" ProgramacionVic");
+//        dataSource.setUsername(" VPerezProgramacionNCapasNoviembre25");
+        dataSource.setUsername(" ProgramacionVic");
 //        Contraseña de usuario para acceder a la bd
-        dataSource.setPassword("password1");
-//        dataSource.setPassword("5522");
+//        dataSource.setPassword("password1");
+        dataSource.setPassword("5522");
         
         return dataSource; 
     }

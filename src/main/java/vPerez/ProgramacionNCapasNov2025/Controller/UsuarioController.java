@@ -286,6 +286,7 @@ public class UsuarioController {
             return "UsuarioDireccionForm";
         } else {
             //editar direccion
+            
 //            idDireccion=0;
             Result resultDireccion = direccionDaoImplementation.getById(idDireccion);
             Result resultPais = paisDaoImplementation.getAll();

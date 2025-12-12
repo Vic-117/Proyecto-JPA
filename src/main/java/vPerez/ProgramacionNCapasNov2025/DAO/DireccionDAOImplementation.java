@@ -90,7 +90,7 @@ public class DireccionDAOImplementation implements IDireccion {
                     usuario.direcciones = new ArrayList<>();
 
                     usuario.direcciones.add(new Direccion());
-                    usuario.direcciones.get(0).setIdDireccion(1);
+                    usuario.direcciones.get(0).setIdDireccion(0);
 
                     result.Object = usuario;
 

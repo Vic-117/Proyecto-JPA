@@ -13,53 +13,87 @@
         <br>
 
         <div class="row">
-            <br>
-            <div class="input-group col-12  position-relative start-50 top-5 start-0 translate-middle-x">
 
-                <a th:href='@{/Usuario/CargaMasiva}' class="btn btn-outline-success col-3">Carga masiva</a>
-                <!--<br>-->
-                <a th:href='@{/Usuario/UsuarioDireccionForm}' class="btn btn-outline-success col-9">Agregar usuario</a>
-            </div> 
-
-            <br>
             <div class="container">
 
 
-                <h1 class="mb-3 fw-bold">USUARIOS</h1>
+                <h1 class="mb-3 fw-bold">LISTA DE USUARIOS</h1>
 
 
             </div>
 
+
+
+
+
             <!--BARRA DE BUSQUEDA-->
 
-            <section class="container">
-                <form class="row mb-3" method="post" th:object="${UsuarioBusqueda}" th:action="@{Usuario/Search}">
-                    <div class="input-group ">
-                        <label class="input-group-text fw-bold col-1">BUSCAR</label> 
-                        <input type="text" class="form-control col-2" placeholder="Nombre"  th:field="*{Nombre}"/>
-                        <input type="text" class="form-control col-2" placeholder="Apellido Paterno"  th:field="*{ApellidoPaterno}"/>
-                        <input type="text" class="form-control col-2" placeholder="Apellido Materno" th:field="*{ApellidoMaterno}" />
-                        <!--<input type="text" class="form-control" placeholder="Rol" th:field="*{rol.nombre}"/>-->
+            <!--            <section class="navbar bg-body-tertiary row">
+                            <form class="col-6" method="post" th:object="${UsuarioBusqueda}" th:action="@{Usuario/Search}">
+                                <div class="input-group ">
+                                    <label class="input-group-text col-1">BUSCAR</label> 
+                                    <input type="text" class="form-control " placeholder="Nombre"  th:field="*{Nombre}"/>
+                                    <input type="text" class="form-control " placeholder="Apellido Paterno"  th:field="*{ApellidoPaterno}"/>
+                                    <input type="text" class="form-control " placeholder="Apellido Materno" th:field="*{ApellidoMaterno}" />
+                                    <input type="text" class="form-control" placeholder="Rol" th:field="*{rol.nombre}"/>
+            
+                                    <select class="form-control"  th:field="*{rol.idRol}">
+                                        <option value="0">Selecciona un rol</option>
+                                        <option th:each="rol:${Roles}"  th:text="${rol.nombre}" th:value="${rol.idRol}"></option>
+                                    </select>    
+            
+            
+                                    <button type="submit" class="btn btn-warning"><i class="bi bi-search"></i></button>
+                                </div>
+            
+                            </form>
+            
+                            <div class="input-group col-6">
+            
+                                <a th:href='@{/Usuario/CargaMasiva}' class="btn btn-outline-success ">Carga masiva</a>
+                                <br>
+                                <a th:href='@{/Usuario/UsuarioDireccionForm}' class="btn btn-outline-success">Agregar usuario</a>
+                            </div>
+                        </section>-->
 
-                        <select class="form-control col-2"  th:field="*{rol.idRol}">
-                            <option value="0">Selecciona un rol</option>
-                            <option th:each="rol:${Roles}"  th:text="${rol.nombre}" th:value="${rol.idRol}"></option>
-                        </select>    
+            <section class="navbar bg-body-tertiary">
+                <div class="container-fluid">
+                    <div class="row w-100 align-items-center g-3"> 
 
+                        <form class="col-12 col-lg-7" method="post" th:object="${UsuarioBusqueda}" th:action="@{Usuario/Search}">
+                            <div class="input-group">
+                                <label class="input-group-text">BUSCAR</label>
 
-                        <button type="submit" class="btn btn-warning"><i class="bi bi-search"></i></button>
+                                <input type="text" class="form-control col-3" placeholder="Nombre" th:field="*{Nombre}"/>
+                                <input type="text" class="form-control col-3" placeholder="Apellido Paterno" th:field="*{ApellidoPaterno}"/>
+                                <input type="text" class="form-control d-none d-md-block col-3" placeholder="Apellido Materno" th:field="*{ApellidoMaterno}" /> <select class="form-control" th:field="*{rol.idRol}">
+                                    <option value="0" class="col-3">Selecciona un rol</option>
+                                    <option th:each="rol:${Roles}" th:text="${rol.nombre}" th:value="${rol.idRol}"></option>
+                                </select>
+
+                                <button type="submit" class="btn btn-warning"><i class="bi bi-search"></i></button>
+                            </div>
+                        </form>
+
+                        <div class="col-12 col-lg-5 d-flex justify-content-end align-items-center">
+
+                            <a th:href='@{/Usuario/CargaMasiva}' class="btn btn-outline-success me-2">Carga masiva</a>
+                            <a th:href='@{/Usuario/UsuarioDireccionForm}' class="btn btn-outline-success">Agregar usuario</a>
+                        </div>
                     </div>
-
-                </form>
+                </div>
             </section>
 
 
-            <table class="table table-primary table-striped-columns  table-hover table-responsive col-sm-12" >
+            <table class="table  table-hover table-responsive align-middle  table-bordered  col-sm-12 rounded-4" >
                 <!--cabeceras de tabla-->
-                <th class="col-3 " style="color:green">Nombre Completo</th>
+                <thead class="table-primary text-center">
+                <th class="col-2" style="color:green">Nombre Completo</th>
                 <th class="col-4" style="color:green">Información</th>
                 <th class="col-4" style="color:green">Direccion</th>
                 <th class="col-1" style="color:green">Acciones</th> 
+                <th class="col-1" style="color:green">Desactivar</th> 
+                </thead>
 
                 <!--filas de la tabla-->
                 <tr th:each = "usuario:${Usuarios}">
@@ -80,19 +114,28 @@
 
 
 
-                    <td>
+                    <td class="text-center">
                         <!--<button class="btn btn-danger" th:href="@{Usuario/delete/{idUsuario} (idUsuario = ${usuario.IdUsuario})}">-->
                         <!--Llamamos a la funcion de forma dinamica con thymeleaf-->
-                        <button class="btn btn-danger" th:onclick="|EliminarUsuario(${usuario.idUsuario})|">
+                        <button class="btn border-danger mb-2" th:onclick="|EliminarUsuario(${usuario.idUsuario})|">
                             <i class="bi bi-trash-fill"></i>
                         </button>
-                        <a href="url" class="btn btn-info" th:href="@{/Usuario/detail/{idUsuario} (idUsuario=${usuario.idUsuario})}">
+
+                        <a href="url" class="btn border-info" th:href="@{/Usuario/detail/{idUsuario} (idUsuario=${usuario.idUsuario})}">
 
 
                             <i class="bi bi-vector-pen"></i>
                         </a>
 
 
+
+                    </td>
+
+                    <td class="text-center">
+                        <div class="form-check form-switch text-center">
+                            <input class="form-check-input" type="checkbox" role="switch" id="switchCheckChecked" >
+
+                        </div>
                     </td>
 
 
