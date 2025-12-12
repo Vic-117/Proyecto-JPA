@@ -101,7 +101,7 @@ public class UsuarioController {
         model.addAttribute("UsuarioBusqueda", new Usuario());//creando usuario(vacio) para que pueda mandarse la busqueda
         Result resultRoles = rolDaoImplementation.getAll();
         model.addAttribute("Roles", resultRoles.Objects);
-        redirectAtriAttributes.addFlashAttribute("usuariosSwitch", result.Objects);
+        redirectAtriAttributes.addFlashAttribute("usuariosEstatus", result.Objects);
         return "Index";
     }
 
@@ -206,6 +206,23 @@ public class UsuarioController {
         return "redirect:/Usuario";
 
     }
+    
+    @GetMapping("softDelete/{idUsuario}/{estatus}")
+    @ResponseBody
+    public Result softDelete(@PathVariable("idUsuario") int idUsuario,@PathVariable("estatus") int estatus,RedirectAttributes redirectAttributes){
+        Usuario usuario = new Usuario();
+        usuario.setIdUsuario(idUsuario);
+        usuario.setEstatus(estatus);
+        
+        ModelMapper modelMapper = new ModelMapper();
+        
+        vPerez.ProgramacionNCapasNov2025.JPA.Usuario usuarioJpa = modelMapper.map(usuario,  vPerez.ProgramacionNCapasNov2025.JPA.Usuario.class);
+        Result resultSoftDel = usuarioJpaDAOImplementation.softDelete(usuarioJpa);
+//        if(resultSoftDel.Correct){
+//            redirectAttributes.addFlashAttribute("")
+//        }
+        return resultSoftDel;
+    }
 
     @GetMapping("direccion/delete/{idDireccion}/{idUsuario}")
     public String deleteDireccion(@PathVariable("idDireccion") int idDireccion,@PathVariable("idUsuario")String idUsuario, RedirectAttributes redirectAttributes){
@@ -217,11 +234,15 @@ public class UsuarioController {
         return "redirect:/Usuario/detail/"+idUsuario;//Lleva al endpoint
 //        return "Index; --- LLeva a una plantilla
     }
+    
     @GetMapping("detail/{idUsuario}")
     public String getUsuario(@PathVariable("idUsuario") int idUsuario, Model model, RedirectAttributes redirectAttributes) {
         Result result = usuarioDaoImplementation.GetDireccionUsuarioById(idUsuario);
         Result resultUsuario = usuarioDaoImplementation.GetById(idUsuario);
+        Result resultRol = rolDaoImplementation.getAll();
+         model.addAttribute("Roles", resultRol.Objects);//Agregado 12/12/2025
         model.addAttribute("Usuario", result.Object);
+        
 
 //            Result resultUpdate = usuarioDaoImplementation.UpdateUsuario(usuario);
         Result resultUpdate = new Result();

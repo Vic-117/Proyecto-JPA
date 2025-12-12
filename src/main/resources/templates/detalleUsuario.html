@@ -51,7 +51,7 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
                     <p th:utext="|<b>Curp:</b> ${Usuario.curp}|"></p>
 
                     <!--<a href="url" class="btn btn-warning col-12" th:href="@{/Usuario/formularioEditable?idUsuario=}+${Usuario.idUsuario}">Editar</a>-->
-                    <a href="url" class="btn btn-warning col-12" data-bs-toggle="modal" data-bs-target="#my-modal" >Editar</a>
+                    <button class="btn btn-warning col-12" data-bs-toggle="modal" data-bs-target="#my-modal" >Editar</button>
                 </div>
             </div>
 
@@ -76,10 +76,12 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
                             <td class="text-center">
                         
                                 <div class="btn-group">
-                                    <a class="btn btn-warning" th:href="@{/Usuario/formularioEditable?idUsuario=}+${Usuario.idUsuario}+'&idDireccion='+${direccion.idDireccion}">
+                                                                                            <!--BOTON EDITAR DEL MODAL DIRECCION-->
+                                    <button class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#modalDireccion">
                                         <!--@{/Usuario/formularioEditable?idUsuario=}+${Usuario.idUsuario}-->
                                         <i class="bi bi-pencil-square"></i>
-                                    </a>
+                                    </button>
+                                                                                            
                                     <a class="btn btn-danger" th:href="@{/Usuario/direccion/delete/{idDireccion}/{idUsuario} (
                                        idDireccion = ${direccion.idDireccion},idUsuario=${Usuario.idUsuario}
                                        )}">
@@ -90,7 +92,7 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
                             </td>
                         </tr>
                     </table>
-                    <a href="" class="col-12 btn btn-success" th:href="@{/Usuario/formularioEditable?idUsuario=}+ ${Usuario.idUsuario}+'&idDireccion=0'" >Agregar nueva dirección</a>
+                    <button class="col-12 btn btn-success" data-bs-toggle="modal" data-bs-target="#modalDireccion" >Agregar nueva dirección</button>
                 </div>
             </div>
 
@@ -113,7 +115,7 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
 
 
 
-                        <form class="" method="post" th:object="${Usuario}" th:action="@{add}" style="margin:2rem; flex-direction: column">
+                        <form class="" method="post" th:object="${Usuario}" th:action="@{/Usuario/add}" style="margin:2rem; flex-direction: column">
 
                             <input type="hidden" th:field="${Usuario.idUsuario}">
                             <input type="hidden" th:field="${Usuario.Direcciones[0].idDireccion}">
@@ -125,7 +127,7 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
                                 <center>
                                     <br>
                                     <h1 style="font-family: sans-serif; font-size: 2.5rem; font-weight: bold;
-                                        text-shadow: 3px 3px 1px #BFC9EB " >AGREGAR USUARIO
+                                        text-shadow: 3px 3px 1px #BFC9EB " >EDITAR USUARIO
                                     </h1>
                                     <hr>
                                 </center>
@@ -261,7 +263,7 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
 
 
 
-                                <button type="submit" class="btn btn-success row col-12" th:if="${(Usuario.idUsuario !=0 && Usuario.direcciones[0].idDireccion == -1)}" >Actualizar</button>
+                                <!--<button type="submit" class="btn btn-success row col-12" >Actualizar</button>-->
                             </section >
                             <hr>
 
@@ -363,16 +365,141 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
         </section>
                                              
                                              
+                                             
+                                             
+                                             
+                                             
+        <section class="modal fade" id="modalDireccion">
+            <div class="modal-dialog modal-xl">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">DIRECCIÓN </h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                                                                                    <!--CUERPO DEL MODAL DIRECCION-->
+                    <div class="modal-body">
+
+
+
+
+                        <form class="" method="post" th:object="${Usuario}" th:action="@{/Usuario/add}" style="margin:2rem; flex-direction: column">
+
+                           
+
+
+
+
+                            <!--SECCION DE LA DIRECCION-->
+                            <section class="container ">
+
+                                <h3 style="font-weight: bold"></h3>
+
+
+                                <div class="row mb-3" style="">
+                                    <label class="input-group-text fw-bold">calle</label>
+                                    <input type="text" class="form-control mb-3" th:field="${Usuario.direcciones[0].calle}" onkeypress="validarCalle(event, this)">
+                                    <span class="error-message mb-3 row" style="font-size: 0.8rem" />
+                                    <span class="text-danger mb-3 row" style="font-size: 0.8rem" th:if="${#fields.hasErrors('direcciones[0].calle')}" th:errors="$(direcciones[0].calle)"/>
+                                </div>
+
+                                <div class="row  mb-3" style="">
+
+                                    <label class="input-group-text fw-bold">No.Interior</label>
+                                    <input type="text" class="form-control mb-3 " th:field="*{direcciones[0].numeroInterior}">
+                                </div>
+
+                                <div class="row  mb-3" style="">
+                                    <label class="input-group-text fw-bold">No.Exterior</label>
+                                    <input type="text" class="form-control" th:field="*{direcciones[0].numeroExterior}">
+
+                                </div>
+
+                                            <div class="row mb-3" style="">
+                                
+                                                <label class="input-group-text fw-bold ">Id Colonia</label>
+                                                <input type="text" class="form-control " th:field="*{direcciones[0].colonia.idColonia}">
+                                
+                                            </div>
+
+                                <div class="row  mb-3" style="">
+                                    <label class="input-group-text fw-bold" >Pais:</label>
+                                    <select class="form-control" id="ddlPais" >
+                                        th:field="${Usuario.direcciones[0].colonia.municipio.estado.pais}"
+                                                             usuario.direcciones.get(0).getColonia().getMunicipio().getEstado().pais.setIdPais(resultSet.getInt("IDPAIS"));
+                                        <option value="0">Elige un pais de la lista</option>
+                                        <option th:each="pais:${Paises}" th:value="${pais.idPais}" th:text="${pais.nombre}"></option>
+                                        <option  th:value="${pais.IdPais}" th:text="${pais.Nombre}"></option>
+                                    </select>
+                                </div>
+
+                                <div class="row mb-3">
+                                    <label class="input-group-text fw-bold" >Estado:</label>
+                                    <select  class="form-control" id="ddlEstado">
+                                        <option value=0>Selecciona un Estado</option>
+
+                                    </select>
+                                </div>
+
+                                <div class="row mb-3">
+                                    <label class="input-group-text fw-bold " >Municipio:</label>
+                                    <select  class="form-control" id="ddlMunicipio"  th:field="*{direcciones[0].colonia.municipio.idMunicipio}">
+                                        <option value=0>Selecciona un Municipio</option>
+                                    </select>
+                                </div>
+
+                                <div class="row mb-3">
+                                    <label class="input-group-text fw-bold" >Colonia:</label>
+                                    <select class="form-control" id="ddlColonia" th:field="*{direcciones[0].colonia.idColonia}">
+                                        <option value=0>Selecciona la Colonia</option>
+                                    </select>
+                                </div>
+
+
+
+
+
+
+
+                            </section>
+<!--                                <button type="submit" class="btn btn-success col-12" th:if="${(Usuario.idUsuario !=0 && Usuario.direcciones[0].IdDireccion > 0 )}">Editar</button> -->
+
+                            <button type="submit" class="btn btn-success col-12">Guardar</button> 
+
+
+
+
+                        </form>
+
+
+
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cerrar</button>
+                        <button type="button" class="btn btn-success">Guardar cambios</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+                                             
+                                             
                                              <!--SCRIPTS-->
         <script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
 
         <script>
             const myModal = document.getElementById('myModal')
-                    const myInput = document.getElementById('myInput')
+//                    const myInput = document.getElementById('myInput')
 
                     myModal.addEventListener('shown.bs.modal', () => {
                     myInput.focus()
-                    })
+                    });
+            const modalDirecciones = document.getElementById('ModalDireccion')
+//                    const myInput = document.getElementById('myInput')
+
+                    modalDirecciones.addEventListener('shown.bs.modal', () => {
+                    myInput.focus()
+                    });
+                    
+
         </script>
         
         <script th:if="${resultadoUpdate}" th:inline="javascript">

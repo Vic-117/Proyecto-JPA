@@ -47,6 +47,7 @@ public class Usuario {
     private String telefono;
     private String celular;
     private String curp;
+    private int estatus;
 //    @OneToMany(mappedBy = "Usuario",  cascade = CascadeType.ALL,  orphanRemoval = true,fetch = FetchType.LAZY)//Con cacadeType.ALL las operaciones afectan tambien a las otras entidades
     @OneToMany(mappedBy = "Usuario",  cascade = CascadeType.REMOVE,  orphanRemoval = true,fetch = FetchType.LAZY)//Con cacadeType.ALL las operaciones afectan tambien a las otras entidades
     public List<Direccion> direcciones = new ArrayList<>();//Relacion del lado de 1, un usuario tiene muchas direcciones, esta vez inicializado
@@ -146,7 +147,14 @@ public class Usuario {
     public void setCurp(String curp) {
         this.curp = curp;
     }
+    
+    public int getEstatus(){
+        return estatus;
+    }
 
+    public void setEstatus(int estatus){
+        this.estatus = estatus;
+    }
     public List<Direccion> getDirecciones() {
         return direcciones;
     }

@@ -20,4 +20,6 @@ public interface IUsuarioJPA {
     public Result update(Usuario usuario);
     
     public Result delete(int idUsuario);
+    
+    public Result softDelete(Usuario usuario);
 }

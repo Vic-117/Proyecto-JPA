@@ -5,6 +5,7 @@
 package vPerez.ProgramacionNCapasNov2025.ML;
 
 import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
@@ -69,6 +70,9 @@ public class Usuario {
     @Size(min = 10, max = 49)
     @NotEmpty(message = "Campo requerido, por favor llenalo")
     private String curp;
+    @Min(value = 0)
+    @Max(value = 1)
+    private int estatus;
 //    private List<Direccion> direcciones = new ArrayList<>();//Relacion del lado de 1, un usuario tiene muchas direcciones
     @NotNull(message = "Ingresa una direccion")
     public List<Direccion> direcciones;//Relacion del lado de 1, un usuario tiene muchas direcciones
@@ -183,6 +187,15 @@ public class Usuario {
     public void setCurp(String curp) {
         this.curp = curp;
     }
+
+    public int getEstatus() {
+        return estatus;
+    }
+
+    public void setEstatus(int estatus) {
+        this.estatus = estatus;
+    }
+    
 
     public List<Direccion> getDirecciones() {
         return direcciones;

@@ -135,7 +135,31 @@ public class UsuarioJpaDAOImplementation implements IUsuarioJPA {
 
         return result;
 
+    }
 
+    @Transactional
+    @Override
+    public Result softDelete(Usuario usuario ) {
+        Result result = new Result();
+        try {
+            Usuario user = entityManager.find(new Usuario().getClass(), usuario.getIdUsuario());
+
+            if (user != null) {
+                user.setEstatus(usuario.getEstatus());
+                
+                result.Correct = true;
+            }else{
+                result.Correct = false;
+                
+                
+            }
+
+        } catch (Exception ex) {
+            result.Correct = false;
+            result.ErrorMesagge = ex.getLocalizedMessage();
+            result.ex = ex;
+        }
+        return result;
     }
 
 }
