@@ -17,7 +17,7 @@
             <div class="container">
 
 
-                <h1 class="mb-3 fw-bold">LISTA DE USUARIOS</h1>
+                <h2 class="mb-3 fw-bold">LISTA DE USUARIOS</h2>
 
 
             </div>
@@ -56,11 +56,11 @@
                             </div>
                         </section>-->
 
-            <section class="navbar bg-body-tertiary">
+            <section class="navbar bg-body-tertiary" >
                 <div class="container-fluid">
                     <div class="row w-100 align-items-center g-3"> 
 
-                        <form class="col-12 col-lg-7" method="post" th:object="${UsuarioBusqueda}" th:action="@{Usuario/Search}">
+                        <form class="col-12 col-lg-9" method="post" th:object="${UsuarioBusqueda}" th:action="@{Usuario/Search}">
                             <div class="input-group">
                                 <label class="input-group-text">BUSCAR</label>
 
@@ -75,7 +75,7 @@
                             </div>
                         </form>
 
-                        <div class="col-12 col-lg-5 d-flex justify-content-end align-items-center">
+                        <div class="col-12 col-lg-3 d-flex justify-content-end align-items-center">
 
                             <a th:href='@{/Usuario/CargaMasiva}' class="btn btn-outline-success me-2">Carga masiva</a>
                             <a th:href='@{/Usuario/UsuarioDireccionForm}' class="btn btn-outline-success">Agregar usuario</a>
@@ -87,10 +87,10 @@
 
             <table class="table  table-hover table-responsive align-middle  table-bordered  col-sm-12 rounded-4" >
                 <!--cabeceras de tabla-->
-                <thead class="table-primary text-center">
-                <th class="col-2" style="color:green">Nombre Completo</th>
-                <th class="col-4" style="color:green">Información</th>
-                <th class="col-4" style="color:green">Direccion</th>
+                <thead class="table-primary text-center"style="color:#054070">
+                <th class="col-2" >Nombre Completo</th>
+                <th class="col-4">Información</th>
+                <th class="col-4" >Direccion</th>
                 <th class="col-1" style="color:green">Acciones</th> 
                 <th class="col-1" style="color:green">Desactivar</th> 
                 </thead>
@@ -117,11 +117,11 @@
                     <td class="text-center">
                         <!--<button class="btn btn-danger" th:href="@{Usuario/delete/{idUsuario} (idUsuario = ${usuario.IdUsuario})}">-->
                         <!--Llamamos a la funcion de forma dinamica con thymeleaf-->
-                        <button class="btn border-danger mb-2" th:onclick="|EliminarUsuario(${usuario.idUsuario})|">
+                        <button class="btn border-danger mb-2 col-8" th:onclick="|EliminarUsuario(${usuario.idUsuario})|">
                             <i class="bi bi-trash-fill"></i>
                         </button>
 
-                        <a href="url" class="btn border-info" th:href="@{/Usuario/detail/{idUsuario} (idUsuario=${usuario.idUsuario})}">
+                        <a href="url" class="btn border-info col-8" th:href="@{/Usuario/detail/{idUsuario} (idUsuario=${usuario.idUsuario})}">
 
 
                             <i class="bi bi-vector-pen"></i>
@@ -131,9 +131,9 @@
 
                     </td>
 
-                    <td class="text-center">
-                        <div class="form-check form-switch text-center">
-                            <input class="form-check-input" type="checkbox" role="switch" id="switchCheckChecked" >
+                    <td class="text-center" style="background-color: aliceblue">
+                        <div class="form-check form-switch text-center col-12">
+                            <input class="form-check-input" type="checkbox" role="switch" th:id="'switch'+${usuario.idUsuario}" onchange="mensajeCheck(this)" >
 
                         </div>
                     </td>
@@ -145,28 +145,26 @@
 
             </table>
         </div>
-
+        <script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
 
         <script th:if="${resultDelete}" th:inline="javascript">
-            console.log([[${resultDelete}]]);
-            if ([[${resultDelete.Correct}]]){
-            Swal.fire({
-            position: "top-end",
-                    icon: "success",
-                    title: "Realizado",
-                    text:[[${resultDelete.Object}]],
-            });
-            } else{
-            Swal.fire({
-            position: "top-end",
-                    icon: "Error",
-                    title: "We have some problems...",
-                    text:[[${resultDelete.Object}]],
-            });
-            }
+                                console.log([[${resultDelete}]]);
+                                if ([[${resultDelete.Correct}]]){
+                                Swal.fire({
+                                position: "top-end",
+                                        icon: "success",
+                                        title: "Realizado",
+                                        text:[[${resultDelete.Object}]],
+                                });
+                                } else{
+                                Swal.fire({
+                                position: "top-end",
+                                        icon: "Error",
+                                        title: "We have some problems...",
+                                        text:[[${resultDelete.Object}]],
+                                });
+                                }
         </script>
-
-
 
         <script>
             function EliminarUsuario(idUsuario) {
@@ -201,6 +199,19 @@
                     showConfirmButton: false,
                     timer: 1500
             });
+        </script>
+
+        <script>
+
+            function mensajeCheck(thisElement){
+
+            if ($(thisElement).is(':checked')){
+            console.log("usuario desactivado");
+            } else{
+            console.log("Usuario activado");
+            }
+
+            }
 
         </script>
 

@@ -92,7 +92,7 @@ public class UsuarioController {
 //    @Autowired
 //private ModelMapper modelMapper;
     @GetMapping
-    public String getAll(Model model) {
+    public String getAll(Model model, RedirectAttributes redirectAtriAttributes) {
 
         //model permite cargar informacion desde el backend en la vistas(frontend)
 //        Result result = usuarioDaoImplementation.GetAll();
@@ -101,7 +101,7 @@ public class UsuarioController {
         model.addAttribute("UsuarioBusqueda", new Usuario());//creando usuario(vacio) para que pueda mandarse la busqueda
         Result resultRoles = rolDaoImplementation.getAll();
         model.addAttribute("Roles", resultRoles.Objects);
-
+        redirectAtriAttributes.addFlashAttribute("usuariosSwitch", result.Objects);
         return "Index";
     }
 
