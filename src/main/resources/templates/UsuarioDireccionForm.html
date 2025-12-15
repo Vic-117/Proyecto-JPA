@@ -467,24 +467,24 @@
 
                         //ajax para manejra peticiones asincronas
                         $.ajax({
-                        url: "/Usuario/getEstadoByPais/" + $("#ddlPais").val(), //url de la peticion
-                                method: "GET", //tipo de accion
-                                dataType: 'json', // tipos de datos
-                                //Cuando la peticion fue exitosa:
-                                success: function (data, textStatus, jqXHR) {
+                            url: "/Usuario/getEstadoByPais/" + $("#ddlPais").val(), //url de la peticion
+                            method: "GET", //tipo de accion
+                            dataType: 'json', // tipos de datos
+                            //Cuando la peticion fue exitosa:
+                            success: function (data, textStatus, jqXHR) {
                                 if (data.Correct) {
                                 //vacia el ddl para que no se dupliquen al ejecutar varias veces la acción
                                 $("#ddlEstado").empty();
                                 $("#ddlEstado").append(" <option value=0>Selecciona un Estado</option>");
                                 //itera sobre la lista de objetos y ejecuta la funcion de al lado
                                 $.each(data.Objects, function (i, estado) {
-                                //                                                En el input con el id: ddlEstado agrega una option con valores traidos de la petición
+                                //En el input con el id: ddlEstado agrega una option con valores traidos de la petición
                                 $("#ddlEstado").append("<option value=" + estado.idEstado + ">" + estado.nombre + "</option>");
                                 });
                                 }
                                 },
                                 //Cuando hubo error en la petición 
-                                error: function (jqXHR, textStatus, errorThrown) {
+                            error: function (jqXHR, textStatus, errorThrown) {
                                 alert(textStatus);
                                 }
 

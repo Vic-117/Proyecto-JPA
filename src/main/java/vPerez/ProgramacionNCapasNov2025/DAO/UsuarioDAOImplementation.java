@@ -164,6 +164,7 @@ public class UsuarioDAOImplementation implements IUsuario {
         return result;
     }
 
+    //cambios para modal
     @Override
     public Result GetDireccionUsuarioById(int id) {
         Result result = new Result();
@@ -184,7 +185,6 @@ public class UsuarioDAOImplementation implements IUsuario {
 
                     Usuario user = new Usuario();
                     user.rol = new Rol();
-                    user.direcciones = new ArrayList<>();
 
                     user.setIdUsuario(reST.getInt("IDUSUARIO"));
                     user.setNombre(reST.getString("USERNAME"));
@@ -199,22 +199,28 @@ public class UsuarioDAOImplementation implements IUsuario {
                     user.setCelular(reST.getString("CELULAR"));
                     user.setCurp(reST.getString("CURP"));
 
-                    //HAz esto 
-                    do {
-                        Direccion direccion = new Direccion();
-                        direccion.colonia = new Colonia();
-                        direccion.setIdDireccion(reST.getInt("IDDIRECCION"));
-                        direccion.setCalle(reST.getString("CALLE"));
-                        direccion.setNumeroInterior(reST.getString("NUMEROINTERIOR"));
-                        direccion.setNumeroExterior(reST.getString("NUMEROEXTERIOR"));
-                        direccion.colonia.setIdColonia(reST.getInt("IDCOLONIA"));
-                        user.direcciones.add(direccion);
-                        //Mientras que haya una siguiente fila
-                    } while (reST.next());
+                    int idDireccion = reST.getInt("IDDIRECCION");//cambiado
+
+                    if (idDireccion != 0) {//Añadido 
+
+                        user.direcciones = new ArrayList<>();
+                        do {
+                            Direccion direccion = new Direccion();
+                            direccion.colonia = new Colonia();
+                            direccion.setIdDireccion(reST.getInt("IDDIRECCION"));
+                            direccion.setCalle(reST.getString("CALLE"));
+                            direccion.setNumeroInterior(reST.getString("NUMEROINTERIOR"));
+                            direccion.setNumeroExterior(reST.getString("NUMEROEXTERIOR"));
+                            direccion.colonia.setIdColonia(reST.getInt("IDCOLONIA"));
+                            user.direcciones.add(direccion);
+                            //Mientras que haya una siguiente fila
+                        } while (reST.next());
+                    }
 
                     result.Object = user;
+                    result.Correct = true;
                 }
-                return true;
+                return result.Correct;
             }
             );
 
@@ -367,6 +373,8 @@ public class UsuarioDAOImplementation implements IUsuario {
         return result;
     }
 
+    
+    //GETALL DINAMICO
     @Override
     public Result search(Usuario usuario) {
         Result result = new Result();
@@ -382,7 +390,7 @@ public class UsuarioDAOImplementation implements IUsuario {
 
                 ResultSet resultSet = (ResultSet) callableStatement.getObject(5);
                 result.Objects = new ArrayList<>();
-                
+
                 while (resultSet.next()) {
                     int idUsuario = resultSet.getInt("IDUSUARIO");
 

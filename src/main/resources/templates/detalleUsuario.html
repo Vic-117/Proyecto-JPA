@@ -77,7 +77,7 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
                         
                                 <div class="btn-group">
                                                                                             <!--BOTON EDITAR DEL MODAL DIRECCION-->
-                                    <button class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#modalDireccion">
+                                    <button class="btn btn-warning" th:onclick="|EditarDireccion(${Usuario.idUsuario},${direccion.idDireccion})|">
                                         <!--@{/Usuario/formularioEditable?idUsuario=}+${Usuario.idUsuario}-->
                                         <i class="bi bi-pencil-square"></i>
                                     </button>
@@ -382,7 +382,7 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
 
 
 
-                        <form class="" method="post" th:object="${Usuario}" th:action="@{/Usuario/add}" style="margin:2rem; flex-direction: column">
+                        <form  method="post" th:object="${Usuario}" th:action="@{/Usuario/add}" style="margin:2rem; flex-direction: column">
 
                            
 
@@ -397,14 +397,17 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
 
                                 <div class="row mb-3" style="">
                                     <label class="input-group-text fw-bold">calle</label>
+                                    <!--INPUT-->
                                     <input type="text" class="form-control mb-3" th:field="${Usuario.direcciones[0].calle}" onkeypress="validarCalle(event, this)">
+                                    
                                     <span class="error-message mb-3 row" style="font-size: 0.8rem" />
                                     <span class="text-danger mb-3 row" style="font-size: 0.8rem" th:if="${#fields.hasErrors('direcciones[0].calle')}" th:errors="$(direcciones[0].calle)"/>
                                 </div>
 
                                 <div class="row  mb-3" style="">
-
                                     <label class="input-group-text fw-bold">No.Interior</label>
+                                    
+                                    <!--INPUT-->
                                     <input type="text" class="form-control mb-3 " th:field="*{direcciones[0].numeroInterior}">
                                 </div>
 
@@ -414,14 +417,16 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
 
                                 </div>
 
-                                            <div class="row mb-3" style="">
-                                
-                                                <label class="input-group-text fw-bold ">Id Colonia</label>
-                                                <input type="text" class="form-control " th:field="*{direcciones[0].colonia.idColonia}">
-                                
-                                            </div>
+                                <div class="row mb-3" style="">
 
-                                <div class="row  mb-3" style="">
+                                    <label class="input-group-text fw-bold ">Id Colonia</label>
+                                    
+                                    
+                                    <input type="text" class="form-control " th:field="*{direcciones[0].colonia.idColonia}">
+
+                                </div>
+
+<!--                                <div class="row  mb-3" style="">
                                     <label class="input-group-text fw-bold" >Pais:</label>
                                     <select class="form-control" id="ddlPais" >
                                         th:field="${Usuario.direcciones[0].colonia.municipio.estado.pais}"
@@ -452,7 +457,7 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
                                     <select class="form-control" id="ddlColonia" th:field="*{direcciones[0].colonia.idColonia}">
                                         <option value=0>Selecciona la Colonia</option>
                                     </select>
-                                </div>
+                                </div>-->
 
 
 
@@ -460,10 +465,10 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
 
 
 
+                            <button type="submit" class="btn btn-success col-12">Guardar</button> 
                             </section>
 <!--                                <button type="submit" class="btn btn-success col-12" th:if="${(Usuario.idUsuario !=0 && Usuario.direcciones[0].IdDireccion > 0 )}">Editar</button> -->
 
-                            <button type="submit" class="btn btn-success col-12">Guardar</button> 
 
 
 
@@ -486,12 +491,34 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
         <script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
 
         <script>
-            const myModal = document.getElementById('myModal')
+            
+                function EditarDireccion(idUsuario,idDireccion){
+//                cargar datos
+                $.ajax({
+                    url: "/Usuario/direccionForm/"+idUsuario,
+                    method: "GET",
+                    dataType: "json",
+                    success: (data, textStatus, jqXHR)=>{
+                           
+                          console.log("hola" +idDireccion);
+                    },
+                    error:(jqXHR,textStatus,errorThrown)=>{
+                        console.log("hola fallo");
+                    }
+                });
+                
+            }
+            
+        </script>
+        
+        <script>
+            const myModal = document.getElementById('my-Modal')
 //                    const myInput = document.getElementById('myInput')
 
                     myModal.addEventListener('shown.bs.modal', () => {
                     myInput.focus()
                     });
+                    
             const modalDirecciones = document.getElementById('ModalDireccion')
 //                    const myInput = document.getElementById('myInput')
 
@@ -499,8 +526,21 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
                     myInput.focus()
                     });
                     
+            
+//                cargar datos
+                
+                
+               
+                    
+               
+                
+            
+                 
+    
+                    
 
         </script>
+        
         
         <script th:if="${resultadoUpdate}" th:inline="javascript">
                     console.log("Entró");

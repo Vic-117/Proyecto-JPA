@@ -114,7 +114,7 @@
 
 
 
-                    <td class="text-center" >
+                    <td class="text-center">
                         <!--<button class="btn btn-danger" th:href="@{Usuario/delete/{idUsuario} (idUsuario = ${usuario.IdUsuario})}">-->
                         <!--Llamamos a la funcion de forma dinamica con thymeleaf-->
                         <button class="btn border-danger mb-2 col-8" th:onclick="|EliminarUsuario(${usuario.idUsuario})|">
@@ -201,10 +201,10 @@
             });
         </script>
 
-        <script>
+        <script th:inline="javascript">
 
             function mensajeCheck(thisElement, estatus, idUsuario){
-
+               
             if ($(thisElement).is(':checked')){
 
             estatus = 1;
@@ -215,7 +215,7 @@
                     //Cuando la peticion fue exitosa:
                     success: function (data, textStatus, jqXHR) {
                     if (data.Correct) {
-                    console.log("usuario activado")
+                        
                     }
                     },
                     //Cuando hubo error en la petición 
@@ -236,6 +236,7 @@
                     success: function (data, textStatus, jqXHR) {
                     if (data.Correct) {
                     console.log("Usuario desactivado");
+                     $("#btns-actions").hide();
                     }
                     },
                     //Cuando hubo error en la petición 

@@ -117,7 +117,7 @@ public class UsuarioController {
 
     @PostMapping("add")
     public String addAlumnoDireccion(@Valid @ModelAttribute("Usuario") Usuario usuario, BindingResult bindingResult, Model model, RedirectAttributes redirectAttributes) {
-
+//        CAMBIAR METODO PARA ACTUALIZAR USUARIO
         if (usuario.getIdUsuario() == 0 && usuario.direcciones.get(0).getIdDireccion() == 0) { // agregar usuario direccion
 
             if (bindingResult.hasErrors()) {
@@ -238,24 +238,38 @@ public class UsuarioController {
     @GetMapping("detail/{idUsuario}")
     public String getUsuario(@PathVariable("idUsuario") int idUsuario, Model model, RedirectAttributes redirectAttributes) {
         Result result = usuarioDaoImplementation.GetDireccionUsuarioById(idUsuario);
-        Result resultUsuario = usuarioDaoImplementation.GetById(idUsuario);
         Result resultRol = rolDaoImplementation.getAll();
+        
+//        Result resultUsuario = usuarioDaoImplementation.GetById(idUsuario);
          model.addAttribute("Roles", resultRol.Objects);//Agregado 12/12/2025
         model.addAttribute("Usuario", result.Object);
         
 
 //            Result resultUpdate = usuarioDaoImplementation.UpdateUsuario(usuario);
-        Result resultUpdate = new Result();
-        resultUpdate.Correct = true;
-        if (resultUpdate.Correct) {
-            resultUpdate.Object = "Usuario actualizado" + idUsuario;
-        } else {
-            resultUpdate.Object = "Usuario  NO  actualizado" + idUsuario;
-        }
-        redirectAttributes.addFlashAttribute("resultUpdateUsuario", resultUpdate);
-        redirectAttributes.addFlashAttribute("usuario", resultUsuario);
+//        Result resultUpdate = new Result();
+//        resultUpdate.Correct = true;
+//        if (resultUpdate.Correct) {
+//            resultUpdate.Object = "Usuario actualizado" + idUsuario;
+//        } else {
+//            resultUpdate.Object = "Usuario  NO  actualizado" + idUsuario;
+//        }
+//        redirectAttributes.addFlashAttribute("resultUpdateUsuario", resultUpdate);
+//        redirectAttributes.addFlashAttribute("usuario", resultUsuario);
 
         return "detalleUsuario";
+    }
+    
+    @GetMapping("direccionForm/{idUsuario}")
+    @ResponseBody
+    public Result getDireccion(@PathVariable("idUsuario") int idUsuario, Model model, RedirectAttributes redirectAttributes) {
+        Result result = usuarioDaoImplementation.GetDireccionUsuarioById(idUsuario);
+        Result resultRol = rolDaoImplementation.getAll();
+        
+        model.addAttribute("Roles", resultRol.Objects);//Agregado 12/12/2025
+        model.addAttribute("UsuarioD", result.Object);
+    
+
+        return result;
     }
 
     @GetMapping("getEstadoByPais/{idPais}")
