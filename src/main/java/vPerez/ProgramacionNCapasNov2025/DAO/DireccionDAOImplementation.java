@@ -142,6 +142,35 @@ public class DireccionDAOImplementation implements IDireccion {
         }
         return result;
     }
+
+//    @Override
+//    public Result getComplementaryDirection(int idUsuario) {
+//        Result result = new Result();
+//        
+//        try{
+//            result.Correct = jdbcTemplate.execute("{CALL getComplementaryDir(?,?)}",(CallableStatementCallback<Boolean>) callableStatement -> {
+//                callableStatement.registerOutParameter(1, REF_CURSOR);
+//                callableStatement.setInt("2", idUsuario);
+//                
+//                callableStatement.execute();
+//                
+//                ResultSet resultComplementaryDir = (ResultSet) callableStatement.getObject(1);
+//                
+//                while(resultComplementaryDir.next()){
+//                    resultComplementaryDir.getInt("");
+//                }
+//                
+//                
+//                return true;
+//            } );
+//            
+//        }catch(Exception ex){
+//            result.Correct = false;
+//            result.ErrorMesagge = ex.getLocalizedMessage();
+//            result.ex = ex;
+//        }
+//        return result;
+//    }
     
     
 

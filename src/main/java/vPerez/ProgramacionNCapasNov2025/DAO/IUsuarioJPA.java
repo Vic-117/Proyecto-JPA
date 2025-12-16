@@ -22,4 +22,6 @@ public interface IUsuarioJPA {
     public Result delete(int idUsuario);
     
     public Result softDelete(Usuario usuario);
+    
+    public Result getDireccionUsuarioById(int idUsuario);
 }

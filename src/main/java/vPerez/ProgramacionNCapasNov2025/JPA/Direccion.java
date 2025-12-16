@@ -4,6 +4,7 @@
  */
 package vPerez.ProgramacionNCapasNov2025.JPA;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -35,7 +36,7 @@ public class Direccion {
     @ManyToOne
     @JoinColumn(name="idcolonia")
     public Colonia colonia;
-    
+    @JsonIgnore
     @ManyToOne(fetch=FetchType.LAZY)
     @JoinColumn(name="idusuario")
     public Usuario Usuario;//DEL LADO de usuario se agrega el mappedBy que debe coincidir con esta declaración

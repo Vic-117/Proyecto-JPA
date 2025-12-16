@@ -8,6 +8,7 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.TypedQuery;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -27,8 +28,8 @@ public class UsuarioJpaDAOImplementation implements IUsuarioJPA {
     @Autowired
     private EntityManager entityManager;
 
-//    @Autowired
-//    private UsuarioMapper usuarioMapper;
+    @Autowired
+    private UsuarioMapper usuarioMapper;
     @Autowired
     private ModelMapper modelMapper;
 
@@ -59,6 +60,8 @@ public class UsuarioJpaDAOImplementation implements IUsuarioJPA {
         }
         return result;
     }
+    
+    
 
     @Transactional
     @Override
@@ -161,5 +164,40 @@ public class UsuarioJpaDAOImplementation implements IUsuarioJPA {
         }
         return result;
     }
+
+    @Transactional
+    @Override
+    public Result getDireccionUsuarioById(int idUsuario) {
+        Result result = new Result();
+       
+        try{
+            
+            String jpql = "SELECT DISTINCT u FROM Usuario u " +
+                  "JOIN FETCH u.direcciones d " +
+                  "JOIN FETCH d.colonia col " +
+                  "JOIN FETCH col.municipio mun " +
+                  "JOIN FETCH mun.estado est " +
+                  "JOIN FETCH est.pais p " +
+                  "WHERE u.idUsuario = :idUsuario";
+            
+            Usuario usuario = entityManager.createQuery(jpql, Usuario.class)
+                .setParameter("idUsuario", idUsuario)
+                .getSingleResult();
+//            ModelMapper modelMapperr = new ModelMapper();
+           vPerez.ProgramacionNCapasNov2025.ML.Usuario  usuarioML = usuarioMapper.toDTO(usuario);
+//    result.Objects = new ArrayList<>();
+            result.Object = usuarioML;
+            result.Correct = true;
+        }catch(Exception ex){
+            result.Correct = false;
+            result.ErrorMesagge = ex.getLocalizedMessage();
+            result.ex = ex;
+        }
+        
+     
+    
+
+        return result;
+   }
 
 }

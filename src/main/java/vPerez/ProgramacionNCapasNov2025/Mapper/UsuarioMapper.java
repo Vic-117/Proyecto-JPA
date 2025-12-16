@@ -6,17 +6,17 @@ package vPerez.ProgramacionNCapasNov2025.Mapper;
 
 import java.util.List;
 import org.mapstruct.Mapper;
-import vPerez.ProgramacionNCapasNov2025.JPA.Usuario;
+import vPerez.ProgramacionNCapasNov2025.ML.Usuario;
 
 
 /**
  *
  * @author digis
  */
-//@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring")
 
 public interface UsuarioMapper {
-//    Usuario toDTO(vPerez.ProgramacionNCapasNov2025.ML.Usuario usuario);
+    Usuario toDTO(vPerez.ProgramacionNCapasNov2025.JPA.Usuario usuario);
    
 //    List<vPerez.ProgramacionNCapasNov2025.ML.Usuario> toDTOList(List<Usuario> usuarios);
 }

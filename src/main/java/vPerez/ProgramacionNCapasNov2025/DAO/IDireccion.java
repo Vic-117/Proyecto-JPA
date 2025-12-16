@@ -16,5 +16,6 @@ public interface IDireccion {
     public Result getDireccionByUsuario(int idUsuario);
     public Result getById(int idDirección);
     public Result update(Direccion direccion);
+//    public Result getComplementaryDirection(int idUsuario);
     
 }

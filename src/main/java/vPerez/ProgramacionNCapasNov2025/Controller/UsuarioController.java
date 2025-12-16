@@ -91,6 +91,7 @@ public class UsuarioController {
     private DireccionJpaDAOImplementation direccionJpaDAOImplementation;
 //    @Autowired
 //private ModelMapper modelMapper;
+
     @GetMapping
     public String getAll(Model model, RedirectAttributes redirectAtriAttributes) {
 
@@ -132,7 +133,6 @@ public class UsuarioController {
                 return "Usuario";
             } else {
                 //AGREGADO RECIENTEMENTE SOLO EL IF
-         
 
                 ModelMapper modelMapper = new ModelMapper();
 
@@ -149,12 +149,12 @@ public class UsuarioController {
 
             }
 
-        } else if (usuario.getIdUsuario() > 0 && usuario.direcciones.get(0).getIdDireccion() == -1) { // editar usuario
+        } else if (usuario.getIdUsuario() > 0 && usuario.direcciones == null) { // editar usuario
 
-            ModelMapper modelMapper= new ModelMapper();
-            
-            vPerez.ProgramacionNCapasNov2025.JPA.Usuario usuarioEntidad = modelMapper.map(usuario,  vPerez.ProgramacionNCapasNov2025.JPA.Usuario.class);
-            
+            ModelMapper modelMapper = new ModelMapper();
+
+            vPerez.ProgramacionNCapasNov2025.JPA.Usuario usuarioEntidad = modelMapper.map(usuario, vPerez.ProgramacionNCapasNov2025.JPA.Usuario.class);
+
             Result resultUpdateUsuario = usuarioJpaDAOImplementation.update(usuarioEntidad);
 
             if (resultUpdateUsuario.Correct) {
@@ -167,27 +167,26 @@ public class UsuarioController {
             return "redirect:/Usuario/detail/" + usuario.getIdUsuario();
 
         } else if ((usuario.getIdUsuario() > 0 && usuario.direcciones.get(0).getIdDireccion() > 0)) { // editar direccion
-            
+
             ModelMapper modelMapper = new ModelMapper();
-            vPerez.ProgramacionNCapasNov2025.JPA.Usuario usuarioJPA = modelMapper.map(usuario,  vPerez.ProgramacionNCapasNov2025.JPA.Usuario.class);
+            vPerez.ProgramacionNCapasNov2025.JPA.Usuario usuarioJPA = modelMapper.map(usuario, vPerez.ProgramacionNCapasNov2025.JPA.Usuario.class);
             usuarioJPA.direcciones.get(0).Usuario = new vPerez.ProgramacionNCapasNov2025.JPA.Usuario();
             usuarioJPA.direcciones.get(0).Usuario.setIdUsuario(usuario.getIdUsuario());
-            Result resultUpdateDireccion = direccionJpaDAOImplementation.update( usuarioJPA.direcciones.get(0));
-            
-            
+            Result resultUpdateDireccion = direccionJpaDAOImplementation.update(usuarioJPA.direcciones.get(0));
+             return "redirect:/Usuario/detail/" + usuario.getIdUsuario();
 //            return "redirect:/Usuario";
-            
-            
-            
-            
-        } else if ((usuario.getIdUsuario() > 0 && usuario.direcciones.get(0).getIdDireccion() == 0)) { // agregar direccion
+
+
+
+
+        } else if((usuario.getIdUsuario() > 0 && usuario.direcciones.get(0).getIdDireccion() == 0)){ // agregar direccion
             ModelMapper modelMapper = new ModelMapper();
-            vPerez.ProgramacionNCapasNov2025.JPA.Direccion direccionJpa = modelMapper.map(usuario.direcciones.get(0),  vPerez.ProgramacionNCapasNov2025.JPA.Direccion.class);
-            Result resultAddDireccion = direccionJpaDAOImplementation.add(direccionJpa,usuario.getIdUsuario());
-            if(resultAddDireccion.Correct){
-                redirectAttributes.addFlashAttribute("resultadoOperacion",resultAddDireccion.Object);
+            vPerez.ProgramacionNCapasNov2025.JPA.Direccion direccionJpa = modelMapper.map(usuario.direcciones.get(0), vPerez.ProgramacionNCapasNov2025.JPA.Direccion.class);
+            Result resultAddDireccion = direccionJpaDAOImplementation.add(direccionJpa, usuario.getIdUsuario());
+            if (resultAddDireccion.Correct) {
+                redirectAttributes.addFlashAttribute("resultadoOperacion", resultAddDireccion.Object);
             }
-            return "redirect:/Usuario/detail/"+usuario.getIdUsuario();
+            return "redirect:/Usuario/detail/" + usuario.getIdUsuario();
         }
 
         return "redirect:/Usuario";
@@ -206,17 +205,17 @@ public class UsuarioController {
         return "redirect:/Usuario";
 
     }
-    
+
     @GetMapping("softDelete/{idUsuario}/{estatus}")
     @ResponseBody
-    public Result softDelete(@PathVariable("idUsuario") int idUsuario,@PathVariable("estatus") int estatus,RedirectAttributes redirectAttributes){
+    public Result softDelete(@PathVariable("idUsuario") int idUsuario, @PathVariable("estatus") int estatus, RedirectAttributes redirectAttributes) {
         Usuario usuario = new Usuario();
         usuario.setIdUsuario(idUsuario);
         usuario.setEstatus(estatus);
-        
+
         ModelMapper modelMapper = new ModelMapper();
-        
-        vPerez.ProgramacionNCapasNov2025.JPA.Usuario usuarioJpa = modelMapper.map(usuario,  vPerez.ProgramacionNCapasNov2025.JPA.Usuario.class);
+
+        vPerez.ProgramacionNCapasNov2025.JPA.Usuario usuarioJpa = modelMapper.map(usuario, vPerez.ProgramacionNCapasNov2025.JPA.Usuario.class);
         Result resultSoftDel = usuarioJpaDAOImplementation.softDelete(usuarioJpa);
 //        if(resultSoftDel.Correct){
 //            redirectAttributes.addFlashAttribute("")
@@ -225,25 +224,25 @@ public class UsuarioController {
     }
 
     @GetMapping("direccion/delete/{idDireccion}/{idUsuario}")
-    public String deleteDireccion(@PathVariable("idDireccion") int idDireccion,@PathVariable("idUsuario")String idUsuario, RedirectAttributes redirectAttributes){
+    public String deleteDireccion(@PathVariable("idDireccion") int idDireccion, @PathVariable("idUsuario") String idUsuario, RedirectAttributes redirectAttributes) {
         Result resultDelete = direccionJpaDAOImplementation.delete(idDireccion);
-        if(resultDelete.Correct){
-            redirectAttributes.addFlashAttribute("resultadoOperacion",resultDelete.Object);
+        if (resultDelete.Correct) {
+            redirectAttributes.addFlashAttribute("resultadoOperacion", resultDelete.Object);
         }
-        
-        return "redirect:/Usuario/detail/"+idUsuario;//Lleva al endpoint
+
+        return "redirect:/Usuario/detail/" + idUsuario;//Lleva al endpoint
 //        return "Index; --- LLeva a una plantilla
     }
-    
+
     @GetMapping("detail/{idUsuario}")
     public String getUsuario(@PathVariable("idUsuario") int idUsuario, Model model, RedirectAttributes redirectAttributes) {
         Result result = usuarioDaoImplementation.GetDireccionUsuarioById(idUsuario);
         Result resultRol = rolDaoImplementation.getAll();
-        
+        Result resultPais = paisDaoImplementation.getAll();
+        model.addAttribute("Paises", resultPais.Objects);
 //        Result resultUsuario = usuarioDaoImplementation.GetById(idUsuario);
-         model.addAttribute("Roles", resultRol.Objects);//Agregado 12/12/2025
+        model.addAttribute("Roles", resultRol.Objects);//Agregado 12/12/2025
         model.addAttribute("Usuario", result.Object);
-        
 
 //            Result resultUpdate = usuarioDaoImplementation.UpdateUsuario(usuario);
 //        Result resultUpdate = new Result();
@@ -255,19 +254,19 @@ public class UsuarioController {
 //        }
 //        redirectAttributes.addFlashAttribute("resultUpdateUsuario", resultUpdate);
 //        redirectAttributes.addFlashAttribute("usuario", resultUsuario);
-
         return "detalleUsuario";
     }
-    
+
     @GetMapping("direccionForm/{idUsuario}")
     @ResponseBody
     public Result getDireccion(@PathVariable("idUsuario") int idUsuario, Model model, RedirectAttributes redirectAttributes) {
-        Result result = usuarioDaoImplementation.GetDireccionUsuarioById(idUsuario);
-        Result resultRol = rolDaoImplementation.getAll();
+//        Result result = usuarioDaoImplementation.GetDireccionUsuarioById(idUsuario);
+        Result result = usuarioJpaDAOImplementation.getDireccionUsuarioById(idUsuario);
         
-        model.addAttribute("Roles", resultRol.Objects);//Agregado 12/12/2025
-        model.addAttribute("UsuarioD", result.Object);
-    
+        Result resultRol = rolDaoImplementation.getAll();
+
+//        redirectAttributes.addFlashAttribute("Roles", resultRol.Objects);//Agregado 12/12/2025
+        model.addAttribute("UsuarioD", result.Objects);
 
         return result;
     }
@@ -321,7 +320,7 @@ public class UsuarioController {
             return "UsuarioDireccionForm";
         } else {
             //editar direccion
-            
+
 //            idDireccion=0;
             Result resultDireccion = direccionDaoImplementation.getById(idDireccion);
             Result resultPais = paisDaoImplementation.getAll();
