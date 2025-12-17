@@ -4,6 +4,7 @@
  */
 package vPerez.ProgramacionNCapasNov2025.DAO;
 
+import java.util.List;
 import vPerez.ProgramacionNCapasNov2025.JPA.Direccion;
 import vPerez.ProgramacionNCapasNov2025.JPA.Usuario;
 import vPerez.ProgramacionNCapasNov2025.ML.Result;
@@ -24,4 +25,6 @@ public interface IUsuarioJPA {
     public Result softDelete(Usuario usuario);
     
     public Result getDireccionUsuarioById(int idUsuario);
+    
+    public Result addMany(List<Usuario> usuarios);
 }

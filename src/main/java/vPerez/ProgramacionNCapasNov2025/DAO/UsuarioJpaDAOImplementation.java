@@ -28,23 +28,24 @@ public class UsuarioJpaDAOImplementation implements IUsuarioJPA {
     @Autowired
     private EntityManager entityManager;
 
-    @Autowired
-    private UsuarioMapper usuarioMapper;
+//    @Autowired
+//    private UsuarioMapper usuarioMapper;
     @Autowired
     private ModelMapper modelMapper;
 
+    
     @Override
     public Result getAll() {
         Result result = new Result();
         try {
-            TypedQuery<Usuario> typedQuery = entityManager.createQuery("FROM Usuario", Usuario.class);
-            List<Usuario> usuarios = typedQuery.getResultList();//Usuarios entidades
+            TypedQuery<Usuario> typedQuery = entityManager.createQuery("FROM Usuario", Usuario.class);//crear consulta
+            List<Usuario> usuarios = typedQuery.getResultList();//obtener resultados de consulta(Usuarios entidades)
             //                                                       FORMA 1
 
             result.Objects = new ArrayList<>();
             for (Usuario usuario : usuarios) {
                 vPerez.ProgramacionNCapasNov2025.ML.Usuario usuarioML = modelMapper.map(usuario, vPerez.ProgramacionNCapasNov2025.ML.Usuario.class);
-                result.Objects.add(usuarioML);
+                result.Objects.add(usuarioML);//Guardando los resultados ya mapeados a DTO
             }
 
             //                                                     FORMA 2.
@@ -178,13 +179,14 @@ public class UsuarioJpaDAOImplementation implements IUsuarioJPA {
                   "JOIN FETCH col.municipio mun " +
                   "JOIN FETCH mun.estado est " +
                   "JOIN FETCH est.pais p " +
-                  "WHERE u.idUsuario = :idUsuario";
+                  "WHERE u.idUsuario = :idUsuario";//:idUsuario es el parametro pasado
             
-            Usuario usuario = entityManager.createQuery(jpql, Usuario.class)
-                .setParameter("idUsuario", idUsuario)
+            Usuario usuario = entityManager.createQuery(jpql, Usuario.class) //Usando el jpql sobre la entidad usuarioJPA
+                .setParameter("idUsuario", idUsuario)//Pasando parametros a la query
                 .getSingleResult();
 //            ModelMapper modelMapperr = new ModelMapper();
-           vPerez.ProgramacionNCapasNov2025.ML.Usuario  usuarioML = usuarioMapper.toDTO(usuario);
+    //Transformando JPAEntity a DTO(Que necesita la vista)
+           vPerez.ProgramacionNCapasNov2025.ML.Usuario  usuarioML = modelMapper.map(usuario, vPerez.ProgramacionNCapasNov2025.ML.Usuario.class);
 //    result.Objects = new ArrayList<>();
             result.Object = usuarioML;
             result.Correct = true;
@@ -199,5 +201,35 @@ public class UsuarioJpaDAOImplementation implements IUsuarioJPA {
 
         return result;
    }
+    @Transactional
+    @Override
+    public Result addMany(List<Usuario> usuarios) {
+        Result result = new Result();
+        try{
+            
+            result.Objects = new ArrayList<>();
+            for(Usuario usuario: usuarios){
+                entityManager.persist(usuario);
+                
+                usuario.direcciones.get(0).Usuario = new Usuario();
+                usuario.direcciones.get(0).Usuario.setIdUsuario(usuario.getIdUsuario());
+                
+                entityManager.persist(usuario.direcciones.get(0));
+                
+                
+                
+            
+                
+                
+            }
+            result.Correct = true;
+            
+        }catch(Exception ex){
+            result.Correct = false;
+            result.ErrorMesagge = ex.getLocalizedMessage();
+            result.ex = ex;
+        }
+        return result;
+    }
 
 }
