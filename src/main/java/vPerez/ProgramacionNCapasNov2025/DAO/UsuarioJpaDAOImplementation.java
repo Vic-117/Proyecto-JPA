@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import vPerez.ProgramacionNCapasNov2025.JPA.Direccion;
@@ -33,7 +34,6 @@ public class UsuarioJpaDAOImplementation implements IUsuarioJPA {
     @Autowired
     private ModelMapper modelMapper;
 
-    
     @Override
     public Result getAll() {
         Result result = new Result();
@@ -61,8 +61,6 @@ public class UsuarioJpaDAOImplementation implements IUsuarioJPA {
         }
         return result;
     }
-    
-    
 
     @Transactional
     @Override
@@ -143,19 +141,18 @@ public class UsuarioJpaDAOImplementation implements IUsuarioJPA {
 
     @Transactional
     @Override
-    public Result softDelete(Usuario usuario ) {
+    public Result softDelete(Usuario usuario) {
         Result result = new Result();
         try {
             Usuario user = entityManager.find(new Usuario().getClass(), usuario.getIdUsuario());
 
             if (user != null) {
                 user.setEstatus(usuario.getEstatus());
-                
+
                 result.Correct = true;
-            }else{
+            } else {
                 result.Correct = false;
-                
-                
+
             }
 
         } catch (Exception ex) {
@@ -170,64 +167,105 @@ public class UsuarioJpaDAOImplementation implements IUsuarioJPA {
     @Override
     public Result getDireccionUsuarioById(int idUsuario) {
         Result result = new Result();
-       
-        try{
-            
-            String jpql = "SELECT DISTINCT u FROM Usuario u " +
-                  "JOIN FETCH u.direcciones d " +
-                  "JOIN FETCH d.colonia col " +
-                  "JOIN FETCH col.municipio mun " +
-                  "JOIN FETCH mun.estado est " +
-                  "JOIN FETCH est.pais p " +
-                  "WHERE u.idUsuario = :idUsuario";//:idUsuario es el parametro pasado
-            
+
+        try {
+
+            String jpql = "SELECT DISTINCT u FROM Usuario u "
+                    + "JOIN FETCH u.direcciones d "
+                    + "JOIN FETCH d.colonia col "
+                    + "JOIN FETCH col.municipio mun "
+                    + "JOIN FETCH mun.estado est "
+                    + "JOIN FETCH est.pais p "
+                    + "WHERE u.idUsuario = :idUsuario";//:idUsuario es el parametro pasado
+
             Usuario usuario = entityManager.createQuery(jpql, Usuario.class) //Usando el jpql sobre la entidad usuarioJPA
-                .setParameter("idUsuario", idUsuario)//Pasando parametros a la query
-                .getSingleResult();
+                    .setParameter("idUsuario", idUsuario)//Pasando parametros a la query
+                    .getSingleResult();
 //            ModelMapper modelMapperr = new ModelMapper();
-    //Transformando JPAEntity a DTO(Que necesita la vista)
-           vPerez.ProgramacionNCapasNov2025.ML.Usuario  usuarioML = modelMapper.map(usuario, vPerez.ProgramacionNCapasNov2025.ML.Usuario.class);
+            //Transformando JPAEntity a DTO(Que necesita la vista)
+            vPerez.ProgramacionNCapasNov2025.ML.Usuario usuarioML = modelMapper.map(usuario, vPerez.ProgramacionNCapasNov2025.ML.Usuario.class);
 //    result.Objects = new ArrayList<>();
             result.Object = usuarioML;
             result.Correct = true;
-        }catch(Exception ex){
+        } catch (Exception ex) {
             result.Correct = false;
             result.ErrorMesagge = ex.getLocalizedMessage();
             result.ex = ex;
         }
-        
-     
-    
 
         return result;
-   }
+    }
+
+    @Value("${hibernate.jdbc.batch_size:50}") // Usa el valor configurado, por defecto 50
+    private int batchSize;
+
+    
     @Transactional
     @Override
     public Result addMany(List<Usuario> usuarios) {
         Result result = new Result();
-        try{
-            
+        try {
+
+            int i = 0;
             result.Objects = new ArrayList<>();
-            for(Usuario usuario: usuarios){
+            for (Usuario usuario : usuarios) {
                 entityManager.persist(usuario);
-                
+
                 usuario.direcciones.get(0).Usuario = new Usuario();
                 usuario.direcciones.get(0).Usuario.setIdUsuario(usuario.getIdUsuario());
-                
+
                 entityManager.persist(usuario.direcciones.get(0));
-                
-                
-                
-            
-                
-                
+
+                //AÑADIDO RECIEN 16/12/2025
+                if (i % batchSize == 0 && i > 0) {
+                    entityManager.flush();
+                    entityManager.clear();
+                }
+
             }
+            //AÑADIDO RECIEN 16/12/2025
+            entityManager.flush();
+            entityManager.clear();
+
             result.Correct = true;
-            
-        }catch(Exception ex){
+
+        } catch (Exception ex) {
             result.Correct = false;
             result.ErrorMesagge = ex.getLocalizedMessage();
             result.ex = ex;
+        }
+        return result;
+    }
+
+    
+    
+    //BUSQUEDA DINAMICA
+    @Override
+    public Result GetAllDinamico(Usuario usuario) {
+        Result result = new Result();
+
+        //String builder trabaja sobre la misma cadena, un String normal si se modifica se crea otro con la modificacion en otro espacio de memoria
+        StringBuilder query = new StringBuilder("FROM Alumno WHERE UPPER(Nombre) LIKE UPPER(:nombre) AND UPPER(ApellidoPaterno) LIKE UPPER(:apellidoPaterno)");
+
+        //si tiene rol la busqueda
+        if (usuario.rol.getIdRol() != 0) {
+            query.append(" AND rol.idRol = :idRol");
+        }
+
+        TypedQuery<Usuario> queryAlumnos = entityManager.createQuery(query.toString(), Usuario.class);
+
+        queryAlumnos.setParameter("nombre", "%" + usuario.getNombre() + "%");
+        queryAlumnos.setParameter("apellidoPaterno", "%" + usuario.getApellidoPaterno() + "%");
+
+        if (usuario.rol.getIdRol() != 0) {
+            queryAlumnos.setParameter("idRol", usuario.rol.getIdRol());
+        }
+
+        List<Usuario> alumnos = queryAlumnos.getResultList();
+        result.Objects = new ArrayList<>();
+
+        for (Usuario item : alumnos) {
+            result.Objects.add(item);
         }
         return result;
     }

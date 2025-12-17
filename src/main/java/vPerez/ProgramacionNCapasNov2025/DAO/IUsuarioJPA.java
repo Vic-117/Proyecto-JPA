@@ -27,4 +27,6 @@ public interface IUsuarioJPA {
     public Result getDireccionUsuarioById(int idUsuario);
     
     public Result addMany(List<Usuario> usuarios);
+    
+    Result GetAllDinamico(Usuario usuario);
 }
