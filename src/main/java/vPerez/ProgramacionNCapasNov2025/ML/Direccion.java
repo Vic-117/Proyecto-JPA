@@ -29,7 +29,8 @@ public class Direccion {
     private String numeroExterior;
     @NotNull(message = "Ingresa una direccion")
     public Colonia colonia;
- public Usuario usuario;//RELACION DEL LADO DE MUCHOS,Muchas direcciones son parte de un Usuario
+    
+// public Usuario usuario;//RELACION DEL LADO DE MUCHOS,Muchas direcciones son parte de un Usuario
 
     public int getIdDireccion() {
         return IdDireccion;

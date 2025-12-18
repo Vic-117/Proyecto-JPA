@@ -39,12 +39,17 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import vPerez.ProgramacionNCapasNov2025.DAO.ColoniaDAOImplementation;
+import vPerez.ProgramacionNCapasNov2025.DAO.ColoniaJpaDAOImplementation;
 import vPerez.ProgramacionNCapasNov2025.DAO.DireccionDAOImplementation;
 import vPerez.ProgramacionNCapasNov2025.DAO.DireccionJpaDAOImplementation;
 import vPerez.ProgramacionNCapasNov2025.DAO.EstadoDAOImplementation;
+import vPerez.ProgramacionNCapasNov2025.DAO.EstadoJpaDAOIMplementation;
 import vPerez.ProgramacionNCapasNov2025.DAO.MunicipioDAOImplementation;
+import vPerez.ProgramacionNCapasNov2025.DAO.MunicipioJpaDAOImplementation;
 import vPerez.ProgramacionNCapasNov2025.DAO.PaisDAOImplementation;
+import vPerez.ProgramacionNCapasNov2025.DAO.PaisJpaDAOImplementation;
 import vPerez.ProgramacionNCapasNov2025.DAO.RolDAOImplementation;
+import vPerez.ProgramacionNCapasNov2025.DAO.RolJpaDAOImplementation;
 import vPerez.ProgramacionNCapasNov2025.DAO.UsuarioDAOImplementation;
 import vPerez.ProgramacionNCapasNov2025.DAO.UsuarioJpaDAOImplementation;
 import vPerez.ProgramacionNCapasNov2025.ML.Colonia;
@@ -88,7 +93,22 @@ public class UsuarioController {
     private UsuarioJpaDAOImplementation usuarioJpaDAOImplementation;
 
     @Autowired
+    private RolJpaDAOImplementation rolJpaDAOImplementation;
+
+    @Autowired
     private DireccionJpaDAOImplementation direccionJpaDAOImplementation;
+
+    @Autowired
+    private PaisJpaDAOImplementation paisJpaDAOImplementation;
+
+    @Autowired
+    private EstadoJpaDAOIMplementation estadoJpaDAOImplementation;
+
+    @Autowired
+    private MunicipioJpaDAOImplementation municipioJpaDAOImplementation;
+
+    @Autowired
+    private ColoniaJpaDAOImplementation coloniaJpaDAOImplementation;
 //    @Autowired
 //private ModelMapper modelMapper;
 
@@ -100,7 +120,8 @@ public class UsuarioController {
         Result result = usuarioJpaDAOImplementation.getAll();
         model.addAttribute("Usuarios", result.Objects);
         model.addAttribute("UsuarioBusqueda", new Usuario());//creando usuario(vacio) para que pueda mandarse la busqueda
-        Result resultRoles = rolDaoImplementation.getAll();
+//        Result resultRoles = rolDaoImplementation.getAll();
+        Result resultRoles = rolJpaDAOImplementation.getAll();
         model.addAttribute("Roles", resultRoles.Objects);
         redirectAtriAttributes.addFlashAttribute("usuariosEstatus", result.Objects);
         return "Index";
@@ -108,8 +129,9 @@ public class UsuarioController {
 
     @GetMapping("UsuarioDireccionForm")
     public String showAlumnoDireccion(Model model, RedirectAttributes redirectAttributes) {
-        Result result = rolDaoImplementation.getAll();
-        Result resultPais = paisDaoImplementation.getAll();
+//        Result resultPais = paisDaoImplementation.getAll();
+        Result result = rolJpaDAOImplementation.getAll();
+        Result resultPais = paisJpaDAOImplementation.getAll();
         model.addAttribute("Roles", result.Objects);
         model.addAttribute("Paises", resultPais.Objects);
         model.addAttribute("Usuario", new Usuario());
@@ -122,7 +144,8 @@ public class UsuarioController {
         if (usuario.getIdUsuario() == 0 && usuario.direcciones.get(0).getIdDireccion() == 0) { // agregar usuario direccion
 
             if (bindingResult.hasErrors()) {
-                Result result = rolDaoImplementation.getAll();
+//                Result result = rolDaoImplementation.getAll();
+                Result result = rolJpaDAOImplementation.getAll();
                 model.addAttribute("Roles", result.Objects);
                 model.addAttribute("Usuario", usuario);
                 if (result.Correct) {
@@ -173,13 +196,10 @@ public class UsuarioController {
             usuarioJPA.direcciones.get(0).Usuario = new vPerez.ProgramacionNCapasNov2025.JPA.Usuario();
             usuarioJPA.direcciones.get(0).Usuario.setIdUsuario(usuario.getIdUsuario());
             Result resultUpdateDireccion = direccionJpaDAOImplementation.update(usuarioJPA.direcciones.get(0));
-             return "redirect:/Usuario/detail/" + usuario.getIdUsuario();
+            return "redirect:/Usuario/detail/" + usuario.getIdUsuario();
 //            return "redirect:/Usuario";
 
-
-
-
-        } else if((usuario.getIdUsuario() > 0 && usuario.direcciones.get(0).getIdDireccion() == 0)){ // agregar direccion
+        } else if ((usuario.getIdUsuario() > 0 && usuario.direcciones.get(0).getIdDireccion() == 0)) { // agregar direccion
             ModelMapper modelMapper = new ModelMapper();
             vPerez.ProgramacionNCapasNov2025.JPA.Direccion direccionJpa = modelMapper.map(usuario.direcciones.get(0), vPerez.ProgramacionNCapasNov2025.JPA.Direccion.class);
             Result resultAddDireccion = direccionJpaDAOImplementation.add(direccionJpa, usuario.getIdUsuario());
@@ -236,9 +256,12 @@ public class UsuarioController {
 
     @GetMapping("detail/{idUsuario}")
     public String getUsuario(@PathVariable("idUsuario") int idUsuario, Model model, RedirectAttributes redirectAttributes) {
-        Result result = usuarioDaoImplementation.GetDireccionUsuarioById(idUsuario);
-        Result resultRol = rolDaoImplementation.getAll();
-        Result resultPais = paisDaoImplementation.getAll();
+//        Result result = usuarioDaoImplementation.GetDireccionUsuarioById(idUsuario);
+//        Result resultRol = rolDaoImplementation.getAll();
+//        Result resultPais = paisDaoImplementation.getAll();
+        Result result = usuarioJpaDAOImplementation.getDireccionUsuarioById(idUsuario);
+        Result resultRol = rolJpaDAOImplementation.getAll();
+        Result resultPais = paisJpaDAOImplementation.getAll();
         model.addAttribute("Paises", resultPais.Objects);
 //        Result resultUsuario = usuarioDaoImplementation.GetById(idUsuario);
         model.addAttribute("Roles", resultRol.Objects);//Agregado 12/12/2025
@@ -262,7 +285,7 @@ public class UsuarioController {
     public Result getDireccion(@PathVariable("idUsuario") int idUsuario, Model model, RedirectAttributes redirectAttributes) {
 //        Result result = usuarioDaoImplementation.GetDireccionUsuarioById(idUsuario);
         Result result = usuarioJpaDAOImplementation.getDireccionUsuarioById(idUsuario);
-        
+
         Result resultRol = rolDaoImplementation.getAll();
 
 //        redirectAttributes.addFlashAttribute("Roles", resultRol.Objects);//Agregado 12/12/2025
@@ -274,7 +297,7 @@ public class UsuarioController {
     @GetMapping("getEstadoByPais/{idPais}")
     @ResponseBody
     public Result getEstadoByPais(@PathVariable int idPais) {
-        Result result = estadoDaoImplementation.getByPais(idPais);
+        Result result = estadoJpaDAOImplementation.getByPais(idPais);
 
         return result;
     }
@@ -282,57 +305,20 @@ public class UsuarioController {
     @GetMapping("getMunicipioByEstado/{idEstado}")
     @ResponseBody
     public Result getMunicipioByEstado(@PathVariable("idEstado") int idEstado) {
-        Result result = municipioDaoImplementation.getByEstado(idEstado);
+//        Result result = municipioDaoImplementation.getByEstado(idEstado);
+        Result result = municipioJpaDAOImplementation.getByEstado(idEstado);
         return result;
     }
 
     @GetMapping("getColoniaByMunicipio/{idMunicipio}")
     @ResponseBody
     public Result getColoniaByMunicipio(@PathVariable("idMunicipio") int idMunicipio) {
-        Result result = coloniaDaoImplementation.getColoniaByMunicipio(idMunicipio);
+//        Result result = coloniaDaoImplementation.getColoniaByMunicipio(idMunicipio);
+        Result result = coloniaJpaDAOImplementation.getByMunicipio(idMunicipio);
         return result;
     }
 
-    //SOLO CARGA LA PAGINA(PARTES DEL FORMULARIO)
-    @GetMapping("/formularioEditable")//----------->>>>>>>>>
-    public String getUsuarioForm(@RequestParam int idUsuario, @RequestParam(required = false) Integer idDireccion, Model model, RedirectAttributes redirectAttributes) {
-
-        if (idDireccion == null) {
-            //modificar usuario
-            Result resultRol = rolDaoImplementation.getAll();
-            Result result = usuarioDaoImplementation.GetById(idUsuario);
-            model.addAttribute("Roles", resultRol.Objects);
-
-            Usuario usuario = (Usuario) result.Object;
-            usuario.direcciones = new ArrayList<>();
-            usuario.direcciones.add(new Direccion());
-            usuario.direcciones.get(0).setIdDireccion(-1);
-
-            model.addAttribute("Usuario", usuario);
-
-            return "UsuarioDireccionForm";
-        } else if (idDireccion == 0) {
-            //guardar
-            Result resultUsuario = direccionDaoImplementation.getDireccionByUsuario(idUsuario);
-            model.addAttribute("Paises", paisDaoImplementation.getAll().Objects);
-            model.addAttribute("Usuario", (Usuario) resultUsuario.Object);
-
-            return "UsuarioDireccionForm";
-        } else {
-            //editar direccion
-
-//            idDireccion=0;
-            Result resultDireccion = direccionDaoImplementation.getById(idDireccion);
-            Result resultPais = paisDaoImplementation.getAll();
-
-            model.addAttribute("Usuario", resultDireccion.Object);
-            model.addAttribute("Paises", resultPais.Objects);
-
-            return "UsuarioDireccionForm";
-
-        }
-
-    }
+  
 
     //Carga la pagina de carga masiva
     @GetMapping("CargaMasiva")
@@ -524,12 +510,27 @@ public class UsuarioController {
 
         if (extensionArchivo.equals("txt")) {
             List<Usuario> usuarios = LeerArchivo(new File(ruta));
-            usuarioDaoImplementation.AddMany(usuarios);
+//            usuarioDaoImplementation.AddMany(usuarios);
+            ModelMapper modelMapper = new ModelMapper();
+            List<vPerez.ProgramacionNCapasNov2025.JPA.Usuario> usuariosJPA = new ArrayList<>();
+            for (Usuario usuario : usuarios) {
+                vPerez.ProgramacionNCapasNov2025.JPA.Usuario usuarioJPA = modelMapper.map(usuario, vPerez.ProgramacionNCapasNov2025.JPA.Usuario.class);
+                usuariosJPA.add(usuarioJPA);
+            }
+//            usuarioDaoImplementation.AddMany(usuarios);
+            usuarioJpaDAOImplementation.addMany(usuariosJPA);
 
         } else {
             //Guardando usuarios de la lista de usuarios creada con el metodo leer archivo
             List<Usuario> usuarios = LeerArchivoExcel(new File(ruta));
-            usuarioDaoImplementation.AddMany(usuarios);
+            ModelMapper modelMapper = new ModelMapper();
+            List<vPerez.ProgramacionNCapasNov2025.JPA.Usuario> usuariosJPA = new ArrayList<>();
+            for (Usuario usuario : usuarios) {
+                vPerez.ProgramacionNCapasNov2025.JPA.Usuario usuarioJPA = modelMapper.map(usuario, vPerez.ProgramacionNCapasNov2025.JPA.Usuario.class);
+                usuariosJPA.add(usuarioJPA);
+            }
+//            usuarioDaoImplementation.AddMany(usuarios);
+            usuarioJpaDAOImplementation.addMany(usuariosJPA);
 
         }
         sesion.removeAttribute("archivoCargaMasiva");
@@ -541,7 +542,12 @@ public class UsuarioController {
     @PostMapping("/Search")
     public String buscarUsuarios(@ModelAttribute("Usuario") Usuario usuario, Model model) {
         model.addAttribute("UsuarioBusqueda", new Usuario());//creando usuario(vacio) para que pueda mandarse la busqueda
-        Result resultSearch = usuarioDaoImplementation.search(usuario);
+//        Result resultSearch = usuarioDaoImplementation.search(usuario);
+
+        ModelMapper modelMapper = new ModelMapper();
+        vPerez.ProgramacionNCapasNov2025.JPA.Usuario usuarioJPA = modelMapper.map(usuario, vPerez.ProgramacionNCapasNov2025.JPA.Usuario.class);
+        Result resultSearch = usuarioJpaDAOImplementation.GetAllDinamico(usuarioJPA);
+
         Result resultRoles = rolDaoImplementation.getAll();
         model.addAttribute("Roles", resultRoles.Objects);
         model.addAttribute("Usuarios", resultSearch.Objects);

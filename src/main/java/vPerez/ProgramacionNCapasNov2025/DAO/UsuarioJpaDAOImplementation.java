@@ -38,7 +38,7 @@ public class UsuarioJpaDAOImplementation implements IUsuarioJPA {
     public Result getAll() {
         Result result = new Result();
         try {
-            TypedQuery<Usuario> typedQuery = entityManager.createQuery("FROM Usuario", Usuario.class);//crear consulta
+            TypedQuery<Usuario> typedQuery = entityManager.createQuery("FROM Usuario ORDER BY idUsuario DESC", Usuario.class);//crear consulta
             List<Usuario> usuarios = typedQuery.getResultList();//obtener resultados de consulta(Usuarios entidades)
             //                                                       FORMA 1
 
@@ -196,7 +196,7 @@ public class UsuarioJpaDAOImplementation implements IUsuarioJPA {
         return result;
     }
 
-    @Value("${hibernate.jdbc.batch_size:50}") // Usa el valor configurado, por defecto 50
+//    @Value("${hibernate.jdbc.batch_size:50}") // Usa el valor configurado, por defecto 50
     private int batchSize;
 
     
@@ -225,7 +225,6 @@ public class UsuarioJpaDAOImplementation implements IUsuarioJPA {
             }
             //AÑADIDO RECIEN 16/12/2025
             entityManager.flush();
-            entityManager.clear();
 
             result.Correct = true;
 
@@ -245,26 +244,27 @@ public class UsuarioJpaDAOImplementation implements IUsuarioJPA {
         Result result = new Result();
 
         //String builder trabaja sobre la misma cadena, un String normal si se modifica se crea otro con la modificacion en otro espacio de memoria
-        StringBuilder query = new StringBuilder("FROM Alumno WHERE UPPER(Nombre) LIKE UPPER(:nombre) AND UPPER(ApellidoPaterno) LIKE UPPER(:apellidoPaterno)");
+        StringBuilder query = new StringBuilder("FROM Usuario WHERE UPPER(nombre) LIKE UPPER(:nombre) AND UPPER(apellidoPaterno) LIKE UPPER(:apellidoPaterno) AND UPPER(apellidoMaterno) LIKE UPPER(:apellidoMaterno)");
 
         //si tiene rol la busqueda
         if (usuario.rol.getIdRol() != 0) {
             query.append(" AND rol.idRol = :idRol");
         }
 
-        TypedQuery<Usuario> queryAlumnos = entityManager.createQuery(query.toString(), Usuario.class);
+        TypedQuery<Usuario> queryUsuarios = entityManager.createQuery(query.toString(), Usuario.class);
 
-        queryAlumnos.setParameter("nombre", "%" + usuario.getNombre() + "%");
-        queryAlumnos.setParameter("apellidoPaterno", "%" + usuario.getApellidoPaterno() + "%");
+        queryUsuarios.setParameter("nombre", "%" + usuario.getNombre() + "%");//asignar parametros de entrada
+        queryUsuarios.setParameter("apellidoPaterno", "%" + usuario.getApellidoPaterno()+ "%");
+        queryUsuarios.setParameter("apellidoMaterno", "%" + usuario.getApellidoMaterno()+ "%");
 
         if (usuario.rol.getIdRol() != 0) {
-            queryAlumnos.setParameter("idRol", usuario.rol.getIdRol());
+            queryUsuarios.setParameter("idRol", usuario.rol.getIdRol());
         }
 
-        List<Usuario> alumnos = queryAlumnos.getResultList();
+        List<Usuario> usuarios = queryUsuarios.getResultList();
         result.Objects = new ArrayList<>();
 
-        for (Usuario item : alumnos) {
+        for (Usuario item : usuarios) {
             result.Objects.add(item);
         }
         return result;

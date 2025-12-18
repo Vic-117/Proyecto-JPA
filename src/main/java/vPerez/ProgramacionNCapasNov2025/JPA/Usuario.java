@@ -4,6 +4,7 @@
  */
 package vPerez.ProgramacionNCapasNov2025.JPA;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -48,6 +49,7 @@ public class Usuario {
     private String celular;
     private String curp;
     private int estatus;
+     @JsonIgnore
 //    @OneToMany(mappedBy = "Usuario",  cascade = CascadeType.ALL,  orphanRemoval = true,fetch = FetchType.LAZY)//Con cacadeType.ALL las operaciones afectan tambien a las otras entidades
     @OneToMany(mappedBy = "Usuario",  cascade = CascadeType.REMOVE,  orphanRemoval = true,fetch = FetchType.LAZY)//Con cacadeType.ALL las operaciones afectan tambien a las otras entidades
     public List<Direccion> direcciones = new ArrayList<>();//Relacion del lado de 1, un usuario tiene muchas direcciones, esta vez inicializado

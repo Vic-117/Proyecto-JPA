@@ -60,7 +60,7 @@
                 <div class="container-fluid">
                     <div class="row w-100 align-items-center g-3"> 
 
-                        <form class="col-12 col-lg-9" method="post" th:object="${UsuarioBusqueda}" th:action="@{Usuario/Search}">
+                        <form class="col-12 col-lg-9" method="post" th:object="${UsuarioBusqueda}" th:action="@{/Usuario/Search}">
                             <div class="input-group">
                                 <label class="input-group-text">BUSCAR</label>
 
@@ -72,12 +72,13 @@
                                 </select>
 
                                 <button type="submit" class="btn btn-warning"><i class="bi bi-search"></i></button>
+                                <a class="btn btn-dark me-1" th:href="@{/Usuario}"> <i class="bi bi-arrow-counterclockwise"></i></a>
                             </div>
                         </form>
 
                         <div class="col-12 col-lg-3 d-flex justify-content-end align-items-center">
 
-                            <a th:href='@{/Usuario/CargaMasiva}' class="btn btn-outline-success me-2">Carga masiva</a>
+                            <a th:href='@{/Usuario/CargaMasiva}' class="btn btn-outline-success me-1">Carga masiva</a>
                             <a th:href='@{/Usuario/UsuarioDireccionForm}' class="btn btn-outline-success">Agregar usuario</a>
                         </div>
                     </div>
@@ -96,7 +97,7 @@
                 </thead>
 
                 <!--filas de la tabla-->
-                <tr th:each = "usuario:${Usuarios}">
+                <tr th:each = "usuario:${Usuarios}" th:id="|filasTabla${usuario.idUsuario}|">
 
                     <!--celdas/datos de la tabla-->
                     <td th:text="|${usuario.nombre} ${usuario.apellidoPaterno} ${usuario.apellidoMaterno}|"/>
@@ -191,7 +192,6 @@
 
 
 
-
             Swal.fire({
             position: "top-end",
                     icon: "success",
@@ -201,26 +201,30 @@
             });
         </script>
 
+
         <script th:inline="javascript">
 
+            
+           
             function mensajeCheck(thisElement, estatus, idUsuario){
-               
+       
+            var id = "#filasTabla" + idUsuario;
             if ($(thisElement).is(':checked')){
 
             estatus = 1;
             $.ajax({
-            url: "Usuario/softDelete/" + idUsuario + "/" + estatus, //url de la peticion
+            url: "/Usuario/softDelete/" + idUsuario + "/" + estatus, //url de la peticion
                     method: "GET", //tipo de accion
                     dataType: 'json', // tipos de datos
                     //Cuando la peticion fue exitosa:
                     success: function (data, textStatus, jqXHR) {
                     if (data.Correct) {
-                        
+//                    $(id).removeClass("text-decoration-line-through");
                     }
                     },
                     //Cuando hubo error en la petición 
                     error: function (jqXHR, textStatus, errorThrown) {
-                                alert(textStatus);
+                    alert(textStatus);
                     }
 
             });
@@ -228,7 +232,7 @@
 
             estatus = 0;
             $.ajax({
-            url: "Usuario/softDelete/" + idUsuario + "/" + estatus, //url de la peticion
+            url: "/Usuario/softDelete/" + idUsuario + "/" + estatus, //url de la peticion
                     method: "GET", //tipo de accion
                     dataType: 'json', // tipos de datos
                     //data
@@ -236,12 +240,14 @@
                     success: function (data, textStatus, jqXHR) {
                     if (data.Correct) {
                     console.log("Usuario desactivado");
-                     $("#btns-actions").hide();
+//                    var id = "#filasTabla"+idUsuario;
+//                     $(id).addClass("text-decoration-line-through");
+                    
                     }
                     },
                     //Cuando hubo error en la petición 
                     error: function (jqXHR, textStatus, errorThrown) {
-                                alert(textStatus);
+                    alert(textStatus);
                     }
 
             });
