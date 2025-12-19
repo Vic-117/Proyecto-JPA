@@ -1,0 +1,3 @@
+Nombre | apellidoPaterno | apellidoMaterno | email |password | fechaNacimiento| idRol | Sexo | Telefono | Celular |Curp| calle |numeroInterior|numeroExterior|idColonia
+Jesus | Gonzalez | Ramirez | jesusAasx@gmail.com | 123456L45a. |11/12/2002 | 1 | M | 5517731245 |5512789631 | PERV020521HMCRMCA2| Nuevo Laredo12|10|122|1
+Jesus Angel | Romero | Jimenez | jesusAbvdAA@gmail.com | 123456L45a. |11/12/2002 | 1 | M | 5517731245 |5512789631 | PERV020521HMCRMCA2| Nuevo Mexico|1|123|1

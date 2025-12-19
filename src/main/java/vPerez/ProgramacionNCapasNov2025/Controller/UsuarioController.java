@@ -428,9 +428,9 @@ public class UsuarioController {
         try (XSSFWorkbook workbook = new XSSFWorkbook(archivo)) {
             XSSFSheet sheet = workbook.getSheetAt(0);
             for (Row row : sheet) {
-                if (row.getRowNum() == 0) {
-                    System.out.println("Encabezados");
-                } else {
+//                if (row.getRowNum() == 0) {
+//                    System.out.println("Encabezados");
+//                } else {
 
                     Usuario usuario = new Usuario();
                     usuario.setNombre(row.getCell(0).toString());
@@ -456,7 +456,7 @@ public class UsuarioController {
                     usuario.direcciones.get(0).colonia = new Colonia();
                     usuario.direcciones.get(0).colonia.setIdColonia(Integer.parseInt(row.getCell(14).toString()));
                     usuarios.add(usuario);
-                }
+//                }
 
             }
 
@@ -506,7 +506,7 @@ public class UsuarioController {
         //Obteniendo ruta del archivo que se registró en metodo CargaMasiva()
         String ruta = sesion.getAttribute("archivoCargaMasiva").toString();
         String extensionArchivo = new File(ruta).getName().split("\\.")[1];
-        Result result;
+//        Result result;
 
         if (extensionArchivo.equals("txt")) {
             List<Usuario> usuarios = LeerArchivo(new File(ruta));
@@ -518,7 +518,7 @@ public class UsuarioController {
                 usuariosJPA.add(usuarioJPA);
             }
 //            usuarioDaoImplementation.AddMany(usuarios);
-            usuarioJpaDAOImplementation.addMany(usuariosJPA);
+            Result resultCargaMasiva = usuarioJpaDAOImplementation.addMany(usuariosJPA);
 
         } else {
             //Guardando usuarios de la lista de usuarios creada con el metodo leer archivo
