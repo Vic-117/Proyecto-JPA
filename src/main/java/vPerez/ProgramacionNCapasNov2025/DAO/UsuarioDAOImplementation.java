@@ -282,6 +282,8 @@ public class UsuarioDAOImplementation implements IUsuario {
                     usuario.setTelefono(resultSet.getString("TELEFONO"));
                     usuario.setCelular(resultSet.getString("CELULAR"));
                     usuario.setCurp(resultSet.getString("CURP"));
+//                    usuario.setImagen();
+                    
                     result.Object = usuario;
 
                 }

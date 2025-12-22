@@ -42,6 +42,7 @@
             <input type="hidden" th:field="${Usuario.idUsuario}">
             <!--a veces da -1 y otras 1-->
             <input type="hidden" th:field="${Usuario.Direcciones[0].idDireccion}">
+            <input type="hidden" id="estatus" th:field="${Usuario.estatus}">
 
 
 
@@ -501,7 +502,7 @@
                         });
                         });
                         $(document).ready(function () {
-
+                          $("#estatus").val(1);
                         $("#ddlEstado").change(function () {
 
                         if ($("#ddlEstado").val() == 0) {

@@ -169,16 +169,27 @@ public class UsuarioJpaDAOImplementation implements IUsuarioJPA {
         Result result = new Result();
 
         try {
+            
+            Usuario usuarioBusqueda = entityManager.find(new Usuario().getClass(), idUsuario);
 
-            String jpql = "SELECT DISTINCT u FROM Usuario u "
-                    + "JOIN FETCH u.direcciones d "
-                    + "JOIN FETCH d.colonia col "
-                    + "JOIN FETCH col.municipio mun "
-                    + "JOIN FETCH mun.estado est "
-                    + "JOIN FETCH est.pais p "
-                    + "WHERE u.idUsuario = :idUsuario";//:idUsuario es el parametro pasado
+            StringBuilder jpql = new StringBuilder();
+            if(usuarioBusqueda.direcciones.size() == 0){
+                jpql.append("SELECT DISTINCT u FROM Usuario u "
+                    + "WHERE u.idUsuario = :idUsuario");
+            }else{
+                
+                jpql.append("SELECT DISTINCT u FROM Usuario u "
+                        + "JOIN FETCH u.direcciones d "
+                        + "JOIN FETCH d.colonia col "
+                        + "JOIN FETCH col.municipio mun "
+                        + "JOIN FETCH mun.estado est "
+                        + "JOIN FETCH est.pais p "
+                        + "WHERE u.idUsuario = :idUsuario");//:idUsuario es el parametro pasado
+            }
+            
 
-            Usuario usuario = entityManager.createQuery(jpql, Usuario.class) //Usando el jpql sobre la entidad usuarioJPA
+
+            Usuario usuario = entityManager.createQuery(jpql.toString(), Usuario.class) //Usando el jpql sobre la entidad usuarioJPA
                     .setParameter("idUsuario", idUsuario)//Pasando parametros a la query
                     .getSingleResult();
 //            ModelMapper modelMapperr = new ModelMapper();

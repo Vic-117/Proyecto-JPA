@@ -50,44 +50,47 @@
         </style>
 
     </head>
-    <body>
+    
+    <body class="container p-3">
         <br>
-        <h1 class="container">Carga Masiva</h1>
+        <h1 class="container text-center">Carga Masiva </h1>
+        <label class="container fs-5 mb-4">Sube un documento para guardar multiples usuarios</label>
 
 
 
         <!--BOTON PARA MOSTRAR FORMULARIO-->
-        <div class="container mb-3">
-            <button class="container btn btn-primary col-12" id="btn-show-form" onclick="mostrarForm()">Mostrar formulario</button>
+        <div class="container mb-3 text-center">
+            <button class="container btn btn-primary col-3" id="btn-show-form" onclick="mostrarForm()">Mostrar formulario</button>
         </div>
 
-        <section id="formCargaMasiva">
+        <section  id="formCargaMasiva"class="card">
 
 
             <!--BOTONES DE EXCEL Y TXT-->
-            <div class="input-group container mb-3 ">
-                <button class=" btn btn-success col-6" id="btn-excel" onclick="cambiarBotonExcel()">EXCELL</button>
-                <button class=" btn btn-light col-6" id="btn-txt" onclick="cambiarBotonTxt()">TXT</button>
+            <div class="input-group mb-3 ">
+                <button class=" btn btn-success col-3" id="btn-excel" onclick="cambiarBotonExcel()">EXCELL</button>
+                <button class=" btn btn-light col-3" id="btn-txt" onclick="cambiarBotonTxt()">TXT</button>
             </div>
 
 
 
-            <form  action="/Usuario/CargaMasiva" method="POST" enctype="multipart/form-data" >
+            <form   action="/Usuario/CargaMasiva" method="POST" enctype="multipart/form-data" >
 
 
-                <div id="btns-archivo-submit" style="display: none">
+                <div id="btns-archivo-submit" class="row" style="display: none">
 
                     <!--BOTON PARA SUBIR ARCHIVO-->
-                    <div class="container mb-3">      
-                        <input type="file" class="form-control mb-3" id="input-file" name="archivo">
+                    <div class="mb-3 w-50 input-group">      
+                        <input type="file" class="form-control" id="input-file" name="archivo" required> 
+                        <button type="submit" class="btn" id="btn-submit">Subir</button>
                     </div>
 
 
                     <!--BOTON PARA ENVIAR EL FORMULARIO-->
-                    <div class="container mb-3">      
-                        <button type="submit" class="container btn  col-4" id="btn-submit">Subir</button>
+<!--                    <div class="container mb-3">      
+                       
 
-                    </div>
+                    </div>-->
                 </div>
             </form>
 
@@ -132,19 +135,19 @@
                     }
 
                     function cambiarBotonTxt() {
-                        $("#btn-submit").addClass("btn-submit-txt");
                         $("#btn-submit").removeClass("btn-submit-excel");
-                        $("#input-file").attr("accept", ".txt");
+                        $("#btn-submit").addClass("btn-submit-txt");
                         $("#input-file").removeAttr("accept", ".xlsx");
+                        $("#input-file").attr("accept", ".txt");
                         $("#btns-archivo-submit").css({"display":"block"});
                     }
                     function cambiarBotonExcel() {
-                        $("#btn-submit").addClass("btn-submit-excel");
                         $("#btn-submit").removeClass("btn-submit-txt");
+                        $("#btn-submit").addClass("btn-submit-excel");
                         $("#btns-archivo-submit").css({"display":"block"});
 
-                        $("#input-file").attr("accept", ".xlsx");
                         $("#input-file").removeAttr("accept", ".txt");
+                        $("#input-file").attr("accept", ".xlsx");
                     }
 
 

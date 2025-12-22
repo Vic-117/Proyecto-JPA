@@ -123,7 +123,7 @@ public class UsuarioController {
 //        Result resultRoles = rolDaoImplementation.getAll();
         Result resultRoles = rolJpaDAOImplementation.getAll();
         model.addAttribute("Roles", resultRoles.Objects);
-        redirectAtriAttributes.addFlashAttribute("usuariosEstatus", result.Objects);
+        model.addAttribute("usuariosEstatus", result.Objects);
         return "Index";
     }
 
@@ -140,6 +140,7 @@ public class UsuarioController {
 
     @PostMapping("add")
     public String addAlumnoDireccion(@Valid @ModelAttribute("Usuario") Usuario usuario, BindingResult bindingResult, Model model, RedirectAttributes redirectAttributes) {
+//      usuario.setEstatus(1);
 //        CAMBIAR METODO PARA ACTUALIZAR USUARIO
         if (usuario.getIdUsuario() == 0 && usuario.direcciones.get(0).getIdDireccion() == 0) { // agregar usuario direccion
 
@@ -148,11 +149,11 @@ public class UsuarioController {
                 Result result = rolJpaDAOImplementation.getAll();
                 model.addAttribute("Roles", result.Objects);
                 model.addAttribute("Usuario", usuario);
-                if (result.Correct) {
-                    redirectAttributes.addFlashAttribute("ErroresC", result.Correct);
-                } else {
-                    redirectAttributes.addFlashAttribute("ErroresC", result.Correct);
-                }
+//                if (result.Correct) {
+//                    redirectAttributes.addFlashAttribute("ErroresC", result.Correct);
+//                } else {
+//                    redirectAttributes.addFlashAttribute("ErroresC", result.Correct);
+//                }
                 return "Usuario";
             } else {
                 //AGREGADO RECIENTEMENTE SOLO EL IF
@@ -174,6 +175,9 @@ public class UsuarioController {
 
         } else if (usuario.getIdUsuario() > 0 && usuario.direcciones == null) { // editar usuario
 
+//            usuario.setPassword(usuario.getPassword());
+            usuario.direcciones = new ArrayList<>();
+            usuario.direcciones.add(new Direccion());
             ModelMapper modelMapper = new ModelMapper();
 
             vPerez.ProgramacionNCapasNov2025.JPA.Usuario usuarioEntidad = modelMapper.map(usuario, vPerez.ProgramacionNCapasNov2025.JPA.Usuario.class);
@@ -551,6 +555,7 @@ public class UsuarioController {
         Result resultRoles = rolDaoImplementation.getAll();
         model.addAttribute("Roles", resultRoles.Objects);
         model.addAttribute("Usuarios", resultSearch.Objects);
+        model.addAttribute("usuariosEstatus", resultSearch.Objects);
         return "Index";
 
     }
