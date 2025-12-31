@@ -15,13 +15,27 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
         <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
         <style>
             #usuario1{
-                transition: all 1100ms ease-in-out;
+                transition: all 900ms ease-in-out;
             }
             #usuario1:hover{
                 transform: scale(1.3);
                 z-index: 100;
                 opacity: 0.6;
                 box-shadow: 1px 1px 10px buttonshadow;
+            }
+            
+            #info-user > p{
+                transition: all 450ms ease-in-out;
+                border-radius: 5px;
+                padding: 0 3px;
+/*                display: inline-block;*/
+            }
+            
+            #info-user > p:hover{
+                transform: scale(1.3) ;
+                background-color: lightblue;
+                z-index: 1;
+                
             }
         </style>
     </head>
@@ -38,13 +52,13 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
 
             <!--</div>-->
 
-            <div class="card-title text-center fw-bold" th:text="|${Usuario.nombre} ${Usuario.apellidoPaterno} ${Usuario.apellidoMaterno}|" style="z-index: 101"></div>
-            <div class="card-body">
+            <div class="card-title text-center fw-bold btn btn-primary" disabled th:text="|${Usuario.nombre} ${Usuario.apellidoPaterno} ${Usuario.apellidoMaterno}|" style="z-index: 101"></div>
+            <div class="card-body" id="info-user">
 
                 <!--<div class="text-center" style="font-weight: 600; font-size: 1.5rem;">INFORMACION</div>-->
                 <p th:utext="|<b>Email:</b> ${Usuario.email}|"></p>
 
-                <p th:utext="|<b>Fecha Nacimiento:</b> ${Usuario.fechaNacimiento}|"></p>
+                <p  th:utext="|<b>Fecha Nacimiento:</b> ${Usuario.fechaNacimiento}|"></p>
                 <p th:utext="|<b>Rol:</b> ${Usuario.rol.idRol}|"></p>
                 <p th:utext="|<b>Sexo:</b> ${Usuario.sexo}|"></p>
                 <p th:utext="|<b>Telefono:</b> ${Usuario.telefono}|"></p>
@@ -52,7 +66,7 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
                 <p th:utext="|<b>Curp:</b> ${Usuario.curp}|"></p>
 
                 <!--<a href="url" class="btn btn-warning col-12" th:href="@{/Usuario/formularioEditable?idUsuario=}+${Usuario.idUsuario}">Editar</a>-->
-                <button class="btn btn-warning w-100" data-bs-toggle="modal" data-bs-target="#my-modal" >Editar</button>
+                <button class="btn btn-warning w-100"  data-bs-toggle="modal" data-bs-target="#my-modal" >Editar</button>
             </div>
 
 
@@ -94,7 +108,7 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
                             </tr>
                         </tbody>
                     </table>
-                    <button class="col-3 btn btn-success" data-bs-toggle="modal" data-bs-target="#modalDireccion" th:onclick="AgregarDireccion()">Agregar nueva dirección</button>
+                    <button class="col-sm-12 col-xs-12  col-md-4 btn btn-success" data-bs-toggle="modal" data-bs-target="#modalDireccion" th:onclick="AgregarDireccion()">Agregar nueva dirección</button>
                 </div>
             </div>
 
